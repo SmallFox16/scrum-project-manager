@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useParams, Outlet } from 'react-router-dom'
+import { useParams, Outlet, Link } from 'react-router-dom'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useProject } from '../hooks/queries/useProject'
 import { LoadingSpinner } from '../components/LoadingSpinner'
@@ -76,6 +76,9 @@ function ProjectDetailContent({ project }: ProjectDetailContentProps) {
 
   return (
     <div className="project-detail-panel">
+      <Link to="/projects" className="project-detail-panel__back">
+        &#8592; Back to projects
+      </Link>
       <header className="project-detail-panel__header">
         <h2 className="project-detail-panel__title">{project.name}</h2>
         <p className="project-detail-panel__description">{project.description}</p>

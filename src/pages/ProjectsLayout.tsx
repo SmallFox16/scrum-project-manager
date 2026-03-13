@@ -1,4 +1,4 @@
-import { Outlet, Link } from 'react-router-dom'
+import { Outlet, Link, useParams } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { ProjectListItem } from '../components/ProjectListItem'
 import { LoadingSpinner } from '../components/LoadingSpinner'
@@ -10,6 +10,7 @@ import { setStatusFilter, setSortOrder } from '../store/redux/filtersSlice'
 import type { ProjectStatus } from '../types'
 
 export function ProjectsLayout() {
+  const { projectId } = useParams<{ projectId?: string }>()
   const { data: projects = [], isPending, error, refetch } = useProjects()
   const queryClient = useQueryClient()
 
@@ -39,7 +40,7 @@ export function ProjectsLayout() {
   }
 
   return (
-    <div className="projects-layout">
+    <div className={`projects-layout${projectId ? ' projects-layout--detail-view' : ''}`}>
       <ErrorBoundary>
         <aside className="master-list" aria-label="Project list">
           <div className="master-list__header">

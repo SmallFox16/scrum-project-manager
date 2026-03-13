@@ -1,5 +1,8 @@
 import { NavLink } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import type { NavItem } from '../types'
+import { collapse } from '../store/redux/sidebarSlice'
+import { useMediaQuery, MOBILE_BREAKPOINT } from '../hooks/useMediaQuery'
 
 interface SidebarProps {
   navItems: NavItem[];
@@ -7,6 +10,13 @@ interface SidebarProps {
 }
 
 export function Sidebar({ navItems, isCollapsed }: SidebarProps) {
+  const dispatch = useDispatch()
+  const isMobile = useMediaQuery(MOBILE_BREAKPOINT)
+
+  function handleNavClick() {
+    if (isMobile) dispatch(collapse())
+  }
+
   return (
     <aside className={`app-sidebar${isCollapsed ? ' app-sidebar--collapsed' : ''}`}>
       <nav aria-label="Main navigation">
@@ -21,6 +31,7 @@ export function Sidebar({ navItems, isCollapsed }: SidebarProps) {
                 end
                 title={isCollapsed ? item.label : undefined}
                 aria-label={isCollapsed ? item.label : undefined}
+                onClick={handleNavClick}
               >
                 {item.icon !== undefined ? (
                   <span className="sidebar-nav-link__icon" aria-hidden="true">
