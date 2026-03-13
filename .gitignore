@@ -1,0 +1,28 @@
+# Dependencies
+node_modules
+
+# Build
+dist
+*.local
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Vite / TypeScript
+node_modules/.tmp
+*.tsbuildinfo
