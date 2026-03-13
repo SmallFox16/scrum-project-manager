@@ -5,7 +5,9 @@ import App from './App.tsx'
 
 async function enableMocking() {
   const { worker } = await import('./mocks/browser')
-  return worker.start({ onUnhandledRequest: 'bypass' })
+  await worker.start({ onUnhandledRequest: 'bypass' })
+  // Brief delay so the service worker is fully in control before first fetch
+  await new Promise((r) => setTimeout(r, 50))
 }
 
 function renderApp() {

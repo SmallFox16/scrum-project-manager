@@ -1,4 +1,5 @@
 import type { Task } from '../types'
+import { parseJson } from './projects'
 
 // ============================================================
 // Mutation fetch functions
@@ -25,7 +26,7 @@ export async function createTask(
   if (!res.ok) {
     throw new Error(`Failed to create task: ${res.status}`)
   }
-  return res.json() as Promise<Task>
+  return parseJson<Task>(res)
 }
 
 // PATCH /api/tasks/:taskId — Update task fields (status, assigneeId, etc.)
@@ -41,7 +42,7 @@ export async function updateTask(
   if (!res.ok) {
     throw new Error(`Failed to update task: ${res.status}`)
   }
-  return res.json() as Promise<Task>
+  return parseJson<Task>(res)
 }
 
 // DELETE /api/tasks/:taskId — Delete a task
