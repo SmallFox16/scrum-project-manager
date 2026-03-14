@@ -3,15 +3,20 @@ import { Link } from 'react-router-dom'
 import { AddProjectForm } from '../components/AddProjectForm'
 import { PageLayout } from '../components/PageLayout'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
+import { useCreateProject } from '../hooks/mutations/useCreateProject'
 import type { ProjectFormData } from '../types'
 
 export function NewProjectPage() {
   const navigate = useNavigate();
+  const createProject = useCreateProject();
 
   useDocumentTitle('New Project | Scrum Project Manager');
 
-  function handleAddProject(_data: ProjectFormData) {
-    void navigate('/projects');
+  function handleAddProject(data: ProjectFormData) {
+    createProject.mutate(
+      { name: data.name, description: data.description },
+      { onSuccess: () => void navigate('/projects') },
+    );
   }
 
   const backLink = (

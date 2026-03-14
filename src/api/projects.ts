@@ -130,6 +130,19 @@ export async function fetchProject(id: string): Promise<ProjectWithTasks> {
   }
 }
 
+// POST /api/projects — Create a new project
+export async function createProject(data: { name: string; description: string }): Promise<Project> {
+  const res = await apiFetch('/projects', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  })
+  if (!res.ok) {
+    throw new Error(`Failed to create project: ${res.status}`)
+  }
+  const result = await parseJson<{ project: BackendProject }>(res)
+  return toFrontendProject(result.project)
+}
+
 // GET /api/users — Returns all team members
 export async function fetchTeam(): Promise<TeamMember[]> {
   const res = await apiFetch('/users')
