@@ -132,7 +132,7 @@ export async function fetchProject(id: string): Promise<ProjectWithTasks> {
 }
 
 // POST /api/projects — Create a new project
-export async function createProject(data: { name: string; description: string }): Promise<Project> {
+export async function createProject(data: { name: string; description: string; status?: string }): Promise<Project> {
   const res = await apiFetch('/projects', {
     method: 'POST',
     body: JSON.stringify(data),

@@ -5,7 +5,7 @@ export function useCreateProject() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (data: { name: string; description: string }) => createProject(data),
+    mutationFn: (data: { name: string; description: string; status?: string }) => createProject(data),
 
     onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: ['projects'] })

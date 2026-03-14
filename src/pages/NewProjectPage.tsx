@@ -14,7 +14,7 @@ export function NewProjectPage() {
 
   function handleAddProject(data: ProjectFormData) {
     createProject.mutate(
-      { name: data.name, description: data.description },
+      { name: data.name, description: data.description, status: data.status },
       { onSuccess: () => void navigate('/projects') },
     );
   }
