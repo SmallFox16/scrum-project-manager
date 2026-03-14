@@ -415,13 +415,26 @@
   color: #334155;
 }
 
-.status-select {
+.project-status-buttons {
+  display: inline-flex;
+  gap: 0.375rem;
+}
+
+.project-status-buttons .status-badge {
   cursor: pointer;
-  border: none;
-  appearance: auto;
-  font-weight: inherit;
-  font-size: inherit;
-  padding-right: 1.25rem;
+  border: 2px solid transparent;
+  transition: opacity 0.15s, border-color 0.15s;
+  opacity: 0.45;
+}
+
+.project-status-buttons .status-badge:hover:not(:disabled) {
+  opacity: 0.75;
+}
+
+.project-status-buttons .status-badge--selected {
+  opacity: 1;
+  border-color: currentColor;
+  cursor: default;
 }
 
 .status-badge--Todo {

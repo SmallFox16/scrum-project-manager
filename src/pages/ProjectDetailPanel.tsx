@@ -113,17 +113,18 @@ function ProjectDetailContent({ project }: ProjectDetailContentProps) {
         <div className="project-detail-panel__meta">
           <div className="project-detail-panel__meta-item">
             <span className="project-detail-panel__meta-label">Status</span>
-            <span className="project-detail-panel__meta-value">
-              <select
-                className={`status-select status-badge status-badge--${project.status}`}
-                value={project.status}
-                onChange={(e) => handleStatusChange(e.target.value as ProjectStatus)}
-                disabled={updateProject.isPending}
-              >
-                <option value="active">Active</option>
-                <option value="completed">Completed</option>
-                <option value="archived">Archived</option>
-              </select>
+            <span className="project-status-buttons">
+              {(['active', 'completed', 'archived'] as ProjectStatus[]).map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  className={`status-badge status-badge--${s}${project.status === s ? ' status-badge--selected' : ''}`}
+                  onClick={() => handleStatusChange(s)}
+                  disabled={updateProject.isPending || project.status === s}
+                >
+                  {s.charAt(0).toUpperCase() + s.slice(1)}
+                </button>
+              ))}
             </span>
           </div>
 
