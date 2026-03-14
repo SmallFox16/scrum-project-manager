@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
-import { useParams, Outlet, Link } from 'react-router-dom'
+import { useParams, Outlet, Link, useNavigate } from 'react-router-dom'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useProject } from '../hooks/queries/useProject'
+import { useDeleteProject } from '../hooks/mutations/useDeleteProject'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { ErrorMessage } from '../components/ErrorMessage'
 import { ErrorBoundary } from '../components/ErrorBoundary'
@@ -67,7 +68,18 @@ interface ProjectDetailContentProps {
 }
 
 function ProjectDetailContent({ project }: ProjectDetailContentProps) {
+  const navigate = useNavigate();
+  const deleteProject = useDeleteProject();
+
   useDocumentTitle(`${project.name} | Scrum Project Manager`);
+
+  function handleDelete() {
+    if (window.confirm(`Delete "${project.name}"? This cannot be undone.`)) {
+      deleteProject.mutate(project.id, {
+        onSuccess: () => void navigate('/projects'),
+      });
+    }
+  }
 
   const isOverdue =
     project.dueDate !== undefined && new Date(project.dueDate) < new Date();
@@ -80,7 +92,16 @@ function ProjectDetailContent({ project }: ProjectDetailContentProps) {
         &#8592; Back to projects
       </Link>
       <header className="project-detail-panel__header">
-        <h2 className="project-detail-panel__title">{project.name}</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h2 className="project-detail-panel__title">{project.name}</h2>
+          <button
+            className="btn-danger"
+            onClick={handleDelete}
+            disabled={deleteProject.isPending}
+          >
+            {deleteProject.isPending ? 'Deleting...' : 'Delete Project'}
+          </button>
+        </div>
         <p className="project-detail-panel__description">{project.description}</p>
 
         <div className="project-detail-panel__meta">

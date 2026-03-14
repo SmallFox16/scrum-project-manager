@@ -143,6 +143,14 @@ export async function createProject(data: { name: string; description: string })
   return toFrontendProject(result.project)
 }
 
+// DELETE /api/projects/:id — Delete a project
+export async function deleteProject(id: string): Promise<void> {
+  const res = await apiFetch(`/projects/${id}`, { method: 'DELETE' })
+  if (!res.ok) {
+    throw new Error(`Failed to delete project: ${res.status}`)
+  }
+}
+
 // GET /api/users — Returns all team members
 export async function fetchTeam(): Promise<TeamMember[]> {
   const res = await apiFetch('/users')

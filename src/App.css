@@ -339,6 +339,29 @@
   text-decoration: none;
 }
 
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4375rem 1rem;
+  border: 1px solid #dc3545;
+  border-radius: 6px;
+  background-color: #dc3545;
+  color: #fff;
+  font-size: 0.875rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-danger:hover {
+  background-color: #bb2d3b;
+  border-color: #bb2d3b;
+}
+
+.btn-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .btn-ghost {
   display: inline-flex;
   align-items: center;
