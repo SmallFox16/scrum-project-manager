@@ -33,6 +33,7 @@ interface BackendProject {
   id: number;
   name: string;
   description: string | null;
+  status: string;
   created_at: string;
 }
 
@@ -62,7 +63,7 @@ function toFrontendProject(bp: BackendProject, taskCount = 0): Project {
     id: String(bp.id),
     name: bp.name,
     description: bp.description ?? '',
-    status: 'active',
+    status: (bp.status as Project['status']) || 'active',
     taskCount,
     createdBy: '',
     createdAt: bp.created_at,
@@ -138,6 +139,19 @@ export async function createProject(data: { name: string; description: string })
   })
   if (!res.ok) {
     throw new Error(`Failed to create project: ${res.status}`)
+  }
+  const result = await parseJson<{ project: BackendProject }>(res)
+  return toFrontendProject(result.project)
+}
+
+// PUT /api/projects/:id — Update a project
+export async function updateProject(id: string, data: { status?: string }): Promise<Project> {
+  const res = await apiFetch(`/projects/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  })
+  if (!res.ok) {
+    throw new Error(`Failed to update project: ${res.status}`)
   }
   const result = await parseJson<{ project: BackendProject }>(res)
   return toFrontendProject(result.project)

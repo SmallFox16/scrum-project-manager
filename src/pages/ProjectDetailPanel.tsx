@@ -3,12 +3,13 @@ import { useParams, Outlet, Link, useNavigate } from 'react-router-dom'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import { useProject } from '../hooks/queries/useProject'
 import { useDeleteProject } from '../hooks/mutations/useDeleteProject'
+import { useUpdateProject } from '../hooks/mutations/useUpdateProject'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { ErrorMessage } from '../components/ErrorMessage'
 import { ErrorBoundary } from '../components/ErrorBoundary'
 import { useAppDispatch } from '../store/redux/hooks'
 import { addRecentlyViewed } from '../store/redux/recentlyViewedSlice'
-import type { Task } from '../types'
+import type { Task, ProjectStatus } from '../types'
 import type { ProjectWithTasks } from '../api/projects'
 
 export type ProjectDetailOutletContext = {
@@ -70,8 +71,13 @@ interface ProjectDetailContentProps {
 function ProjectDetailContent({ project }: ProjectDetailContentProps) {
   const navigate = useNavigate();
   const deleteProject = useDeleteProject();
+  const updateProject = useUpdateProject(project.id);
 
   useDocumentTitle(`${project.name} | Scrum Project Manager`);
+
+  function handleStatusChange(newStatus: ProjectStatus) {
+    updateProject.mutate({ status: newStatus });
+  }
 
   function handleDelete() {
     if (window.confirm(`Delete "${project.name}"? This cannot be undone.`)) {
@@ -108,9 +114,16 @@ function ProjectDetailContent({ project }: ProjectDetailContentProps) {
           <div className="project-detail-panel__meta-item">
             <span className="project-detail-panel__meta-label">Status</span>
             <span className="project-detail-panel__meta-value">
-              <span className={`status-badge status-badge--${project.status}`}>
-                {project.status}
-              </span>
+              <select
+                className={`status-select status-badge status-badge--${project.status}`}
+                value={project.status}
+                onChange={(e) => handleStatusChange(e.target.value as ProjectStatus)}
+                disabled={updateProject.isPending}
+              >
+                <option value="active">Active</option>
+                <option value="completed">Completed</option>
+                <option value="archived">Archived</option>
+              </select>
             </span>
           </div>
 

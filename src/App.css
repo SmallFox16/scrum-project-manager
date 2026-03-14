@@ -415,6 +415,15 @@
   color: #334155;
 }
 
+.status-select {
+  cursor: pointer;
+  border: none;
+  appearance: auto;
+  font-weight: inherit;
+  font-size: inherit;
+  padding-right: 1.25rem;
+}
+
 .status-badge--Todo {
   background-color: #f8fafc;
   color: #334155;
