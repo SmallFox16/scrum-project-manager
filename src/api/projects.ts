@@ -1,5 +1,5 @@
-import type { Project, Task } from '../types'
-import type { TeamMember } from '../mocks/data'
+import type { Project, Task, TeamMember } from '../types'
+import { apiFetch } from './client'
 
 // ============================================================
 // API base URL
@@ -9,8 +9,6 @@ import type { TeamMember } from '../mocks/data'
 // from .env.production.  The fallback keeps tests working even
 // if the env var is somehow absent.
 // ============================================================
-
-const API_BASE = import.meta.env.VITE_API_URL || '/api'
 
 /** Parse response as JSON or throw a clear error if body is not JSON (e.g. HTML). */
 export async function parseJson<T>(res: Response): Promise<T> {
@@ -24,6 +22,62 @@ export async function parseJson<T>(res: Response): Promise<T> {
     throw new Error(
       `Server returned invalid data (not JSON). ${res.ok ? '' : `Status: ${res.status}. `}Try refreshing the page.`
     )
+  }
+}
+
+// ============================================================
+// Backend response types (snake_case)
+// ============================================================
+
+interface BackendProject {
+  id: number;
+  name: string;
+  description: string | null;
+  created_at: string;
+}
+
+interface BackendTask {
+  id: number;
+  title: string;
+  description: string | null;
+  status: string;
+  assigned_to: number | null;
+  project_id: number | null;
+  created_at: string;
+}
+
+// ============================================================
+// Transformers: backend → frontend
+// ============================================================
+
+const STATUS_MAP: Record<string, Task['status']> = {
+  todo: 'Todo',
+  in_progress: 'InProgress',
+  in_review: 'InReview',
+  done: 'Done',
+}
+
+function toFrontendProject(bp: BackendProject, taskCount = 0): Project {
+  return {
+    id: String(bp.id),
+    name: bp.name,
+    description: bp.description ?? '',
+    status: 'active',
+    taskCount,
+    createdBy: '',
+    createdAt: bp.created_at,
+  }
+}
+
+export function toFrontendTask(bt: BackendTask): Task {
+  return {
+    id: String(bt.id),
+    title: bt.title,
+    description: bt.description ?? '',
+    status: STATUS_MAP[bt.status] ?? 'Todo',
+    assigneeId: bt.assigned_to ? String(bt.assigned_to) : undefined,
+    projectId: bt.project_id ? String(bt.project_id) : '',
+    createdAt: bt.created_at,
   }
 }
 
@@ -42,27 +96,52 @@ export type ProjectWithTasks = Project & { tasks: Task[] }
 
 // GET /api/projects — Returns all projects
 export async function fetchProjects(): Promise<Project[]> {
-  const res = await fetch(`${API_BASE}/projects`)
+  const res = await apiFetch('/projects')
   if (!res.ok) {
     throw new Error(`Failed to fetch projects: ${res.status}`)
   }
-  return parseJson<Project[]>(res)
+  const data = await parseJson<{ projects: BackendProject[] }>(res)
+  return data.projects.map((p) => toFrontendProject(p))
 }
 
-// GET /api/projects/:id — Returns a single project with its tasks embedded
+// GET /api/projects/:id + GET /api/tasks?project_id=:id
+// Returns a single project with its tasks merged
 export async function fetchProject(id: string): Promise<ProjectWithTasks> {
-  const res = await fetch(`${API_BASE}/projects/${id}`)
-  if (!res.ok) {
-    throw new Error(`Failed to fetch project: ${res.status}`)
+  const [projectRes, tasksRes] = await Promise.all([
+    apiFetch(`/projects/${id}`),
+    apiFetch(`/tasks?project_id=${id}`),
+  ])
+
+  if (!projectRes.ok) {
+    throw new Error(`Failed to fetch project: ${projectRes.status}`)
   }
-  return parseJson<ProjectWithTasks>(res)
+  if (!tasksRes.ok) {
+    throw new Error(`Failed to fetch tasks: ${tasksRes.status}`)
+  }
+
+  const projectData = await parseJson<{ project: BackendProject }>(projectRes)
+  const tasksData = await parseJson<{ tasks: BackendTask[] }>(tasksRes)
+
+  const tasks = tasksData.tasks.map(toFrontendTask)
+
+  return {
+    ...toFrontendProject(projectData.project, tasks.length),
+    tasks,
+  }
 }
 
-// GET /api/team — Returns all team members
+// GET /api/users — Returns all team members
 export async function fetchTeam(): Promise<TeamMember[]> {
-  const res = await fetch(`${API_BASE}/team`)
+  const res = await apiFetch('/users')
   if (!res.ok) {
     throw new Error(`Failed to fetch team: ${res.status}`)
   }
-  return parseJson<TeamMember[]>(res)
+  const data = await parseJson<{ users: Array<{ id: number; name: string; email: string; role: string }> }>(res)
+  return data.users.map((u) => ({
+    id: String(u.id),
+    name: u.name,
+    email: u.email,
+    avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(u.name)}`,
+    role: u.role,
+  }))
 }

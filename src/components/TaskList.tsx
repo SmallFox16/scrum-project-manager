@@ -8,6 +8,7 @@ import { useUpdateTask } from '../hooks/mutations/useUpdateTask'
 import { useDeleteTask } from '../hooks/mutations/useDeleteTask'
 import type { Task, TaskStatus } from '../types'
 import type { ProjectDetailOutletContext } from '../pages/ProjectDetailPanel'
+import { useCanEdit } from '../hooks/useCanEdit'
 
 interface TaskListProps {
   initialTasks?: Task[];
@@ -20,6 +21,7 @@ export function TaskList({ initialTasks }: TaskListProps) {
   const tasks = initialTasks ?? ctx?.tasks ?? [];
 
   const [searchQuery, setSearchQuery] = useState('');
+  const canEdit = useCanEdit();
 
   const updateTaskMutation = useUpdateTask(projectId ?? '');
   const deleteTaskMutation = useDeleteTask(projectId ?? '');
@@ -87,9 +89,11 @@ export function TaskList({ initialTasks }: TaskListProps) {
         </ul>
       )}
 
-      <ErrorBoundary>
-        <AddTaskForm projectId={projectId ?? ''} />
-      </ErrorBoundary>
+      {canEdit && (
+        <ErrorBoundary>
+          <AddTaskForm projectId={projectId ?? ''} />
+        </ErrorBoundary>
+      )}
     </div>
   )
 }

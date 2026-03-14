@@ -12,12 +12,14 @@ import { useAppSelector } from '../store/redux/hooks'
 import { StatCard } from '../components/StatCard'
 import { LoadingSpinner } from '../components/LoadingSpinner'
 import { ErrorMessage } from '../components/ErrorMessage'
+import { useCanEdit } from '../hooks/useCanEdit'
 
 export function DashboardPage() {
   useDocumentTitle('Dashboard | Scrum Project Manager')
 
   const { data: projects = [], isPending, error, refetch } = useProjects()
   const recentlyViewedIds = useAppSelector((s) => s.recentlyViewed.projectIds)
+  const canEdit = useCanEdit()
 
   // Derive counts from cached data — no extra network requests
   const stats = useMemo(() => {
@@ -141,8 +143,8 @@ export function DashboardPage() {
         <h3 className="dashboard-section-title">All Projects</h3>
         {projects.length === 0 ? (
           <p className="dashboard-empty">
-            No projects yet.{' '}
-            <Link to="/projects/new">Create your first project</Link>.
+            No projects yet.
+            {canEdit && <>{' '}<Link to="/projects/new">Create your first project</Link>.</>}
           </p>
         ) : (
           <ul className="dashboard-project-list">

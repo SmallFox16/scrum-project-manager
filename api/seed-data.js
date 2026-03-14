@@ -1,0 +1,32 @@
+// Mirror of src/mocks/data.ts for Vercel serverless API (read-only in production)
+const teamMembers = [
+  { id: 'tm-1', name: 'Marcus', email: 'marcus@scrumprojectmanager.dev', avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Marcus', role: 'Engineering Lead' },
+  { id: 'tm-2', name: 'Alexander', email: 'alexander@scrumprojectmanager.dev', avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Alexander', role: 'Senior Developer' },
+  { id: 'tm-3', name: 'Robert', email: 'robert@scrumprojectmanager.dev', avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Robert', role: 'UX Designer' },
+];
+
+const projects = [
+  { id: 'proj-1', name: 'Set up GitHub', description: 'Create and configure the GitHub repository.', status: 'completed', taskCount: 3, createdBy: 'tm-1', createdAt: '2025-01-10T09:00:00Z' },
+  { id: 'proj-2', name: 'Setup Discord', description: 'Create and configure the Discord server.', status: 'completed', taskCount: 2, createdBy: 'tm-2', createdAt: '2025-01-15T14:30:00Z' },
+  { id: 'proj-3', name: 'Create GitHub updates in Discord', description: 'Connect GitHub to Discord for repo updates and notifications.', status: 'completed', taskCount: 3, createdBy: 'tm-1', createdAt: '2024-11-01T10:00:00Z' },
+  { id: 'proj-4', name: 'Requirements', description: 'Gather and define project requirements and acceptance criteria.', status: 'active', taskCount: 0, createdBy: 'tm-1', createdAt: '2025-01-01T09:00:00Z' },
+  { id: 'proj-5', name: 'Design', description: 'Architecture, UX/UI design, and technical design decisions.', status: 'active', taskCount: 0, createdBy: 'tm-1', createdAt: '2025-01-01T09:00:00Z' },
+  { id: 'proj-6', name: 'Implementation', description: 'Development and build of features and integrations.', status: 'active', taskCount: 0, createdBy: 'tm-1', createdAt: '2025-01-01T09:00:00Z' },
+  { id: 'proj-7', name: 'Testing', description: 'QA, automated tests, and release validation.', status: 'active', taskCount: 0, createdBy: 'tm-1', createdAt: '2025-01-01T09:00:00Z' },
+  { id: 'proj-8', name: 'Production', description: 'Deploy to production and go-live activities.', status: 'active', taskCount: 0, createdBy: 'tm-1', createdAt: '2025-01-01T09:00:00Z' },
+  { id: 'proj-9', name: 'Maintenance', description: 'Ongoing support, monitoring, and bug fixes.', status: 'active', taskCount: 0, createdBy: 'tm-1', createdAt: '2025-01-01T09:00:00Z' },
+  { id: 'proj-10', name: 'Upgrades', description: 'Planned upgrades, refactors, and technical debt.', status: 'active', taskCount: 0, createdBy: 'tm-1', createdAt: '2025-01-01T09:00:00Z' },
+];
+
+const tasks = [
+  { id: 'task-1', title: 'Create repository', description: 'Create the GitHub repository and set visibility.', status: 'Done', assigneeId: 'tm-3', projectId: 'proj-1', dueDate: '2025-02-01', createdAt: '2025-01-10T09:30:00Z', completedAt: '2025-01-28T16:00:00Z' },
+  { id: 'task-2', title: 'Configure branch protection', description: 'Set up main branch rules and required reviews.', status: 'InProgress', assigneeId: 'tm-2', projectId: 'proj-1', dueDate: '2025-02-15', createdAt: '2025-01-12T10:00:00Z' },
+  { id: 'task-3', title: 'Set up GitHub Actions', description: 'Add workflow for CI and automated checks.', status: 'Todo', projectId: 'proj-1', dueDate: '2025-02-20', createdAt: '2025-01-14T11:00:00Z' },
+  { id: 'task-13', title: 'Create Discord server', description: 'Create the server and set name and icon.', status: 'Done', assigneeId: 'tm-3', projectId: 'proj-2', createdAt: '2025-01-15T15:00:00Z', completedAt: '2025-01-20T17:00:00Z' },
+  { id: 'task-14', title: 'Set up channels and roles', description: 'Create text/voice channels and configure roles.', status: 'InProgress', assigneeId: 'tm-2', projectId: 'proj-2', dueDate: '2025-03-01', createdAt: '2025-01-20T09:00:00Z' },
+  { id: 'task-20', title: 'Connect GitHub webhook to Discord', description: 'Add webhook in repo settings and point to Discord channel.', status: 'Done', assigneeId: 'tm-1', projectId: 'proj-3', createdAt: '2025-01-22T10:00:00Z', completedAt: '2025-01-26T14:00:00Z' },
+  { id: 'task-21', title: 'Configure notification channels', description: 'Create dedicated channel for commits and PRs.', status: 'Done', assigneeId: 'tm-2', projectId: 'proj-3', createdAt: '2025-01-23T09:00:00Z', completedAt: '2025-01-27T11:00:00Z' },
+  { id: 'task-22', title: 'Test commit and PR notifications', description: 'Verify push and pull request events post to Discord.', status: 'InProgress', assigneeId: 'tm-3', projectId: 'proj-3', dueDate: '2025-02-10', createdAt: '2025-01-25T08:00:00Z' },
+];
+
+module.exports = { teamMembers, projects, tasks };

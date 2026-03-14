@@ -25,6 +25,7 @@ import { store } from './store/redux/store'
 import { ThemeProvider } from './context/ThemeContext'
 import { AuthProvider } from './context/AuthContext'
 import { Layout } from './components/Layout'
+import { ProtectedRoute } from './components/ProtectedRoute'
 import { ProjectsLayout } from './pages/ProjectsLayout'
 import { ProjectEmptyState } from './pages/ProjectEmptyState'
 import { TaskList } from './components/TaskList'
@@ -40,6 +41,7 @@ const ProjectDetailPanel = lazy(() => import('./pages/ProjectDetailPanel'))
 const NewProjectPage = lazy(() => import('./pages/NewProjectPage'))
 // Feature 2: DashboardPage is lazy-loaded
 const DashboardPage = lazy(() => import('./pages/DashboardPage'))
+const LoginPage = lazy(() => import('./pages/LoginPage'))
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -66,10 +68,18 @@ export function App() {
             <AuthProvider>
               <BrowserRouter>
                 <Routes>
+                  {/* Login page — outside protected boundary */}
+                  <Route path="/login" element={
+                    <Suspense fallback={<PageSkeleton />}>
+                      <LoginPage />
+                    </Suspense>
+                  } />
+
                   {/* Feature 2: / now redirects to /dashboard */}
                   <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-                  <Route element={<Layout />}>
+                  {/* All app routes wrapped in ProtectedRoute */}
+                  <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
                     {/* Feature 2: Dashboard route */}
                     <Route
                       path="/dashboard"

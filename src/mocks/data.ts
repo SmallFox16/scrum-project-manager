@@ -1,13 +1,6 @@
-import type { Project } from '../types'
-import type { Task } from '../types'
+import type { Project, Task, TeamMember } from '../types'
 
-export interface TeamMember {
-  id: string;
-  name: string;
-  email: string;
-  avatarUrl: string;
-  role: string;
-}
+export type { TeamMember }
 
 export const teamMembers: TeamMember[] = [
   {

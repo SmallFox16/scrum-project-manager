@@ -26,3 +26,6 @@ Thumbs.db
 # Vite / TypeScript
 node_modules/.tmp
 *.tsbuildinfo
+
+# Backend (has its own repo)
+scrum-backend/

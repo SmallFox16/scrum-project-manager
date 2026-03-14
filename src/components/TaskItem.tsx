@@ -10,6 +10,7 @@ import { TeamMemberSelect } from './TeamMemberSelect'
 import { Toast } from './Toast'
 import { useState, useRef } from 'react'
 import { UNDO_WINDOW_MS } from '../hooks/mutations/useDeleteTask'
+import { useCanEdit } from '../hooks/useCanEdit'
 
 interface TaskItemProps {
   task: Task;
@@ -30,6 +31,7 @@ export const TaskItem = memo(function TaskItem({
 }: TaskItemProps) {
   const [showUndoToast, setShowUndoToast] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const canEdit = useCanEdit();
 
   const isOptimistic = task.id.startsWith('temp-');
 
@@ -62,30 +64,34 @@ export const TaskItem = memo(function TaskItem({
           <span className={`status-badge status-badge--${task.status}`}>
             {task.status}
           </span>
-          <button
-            type="button"
-            className="task-delete-btn"
-            onClick={handleDelete}
-            disabled={isDeleting || isOptimistic}
-            aria-label={`Delete task: ${task.title}`}
-            title="Delete task"
-          >
-            &#10005;
-          </button>
+          {canEdit && (
+            <button
+              type="button"
+              className="task-delete-btn"
+              onClick={handleDelete}
+              disabled={isDeleting || isOptimistic}
+              aria-label={`Delete task: ${task.title}`}
+              title="Delete task"
+            >
+              &#10005;
+            </button>
+          )}
         </div>
 
-        <div className="task-item__actions">
-          <TaskStatusButton
-            task={task}
-            onStatusChange={onStatusChange}
-          />
-          {/* Feature 1: searchable combobox replaces basic select */}
-          <TeamMemberSelect
-            taskId={task.id}
-            assigneeId={task.assigneeId}
-            onAssign={onAssign}
-          />
-        </div>
+        {canEdit && (
+          <div className="task-item__actions">
+            <TaskStatusButton
+              task={task}
+              onStatusChange={onStatusChange}
+            />
+            {/* Feature 1: searchable combobox replaces basic select */}
+            <TeamMemberSelect
+              taskId={task.id}
+              assigneeId={task.assigneeId}
+              onAssign={onAssign}
+            />
+          </div>
+        )}
       </div>
 
       {showUndoToast && (

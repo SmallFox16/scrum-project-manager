@@ -8,6 +8,7 @@ import { useProjects } from '../hooks/queries/useProjects'
 import { useAppSelector, useAppDispatch } from '../store/redux/hooks'
 import { setStatusFilter, setSortOrder } from '../store/redux/filtersSlice'
 import type { ProjectStatus } from '../types'
+import { useCanEdit } from '../hooks/useCanEdit'
 
 export function ProjectsLayout() {
   const { projectId } = useParams<{ projectId?: string }>()
@@ -17,6 +18,7 @@ export function ProjectsLayout() {
   const statusFilter = useAppSelector((s) => s.filters.statusFilter)
   const sortOrder = useAppSelector((s) => s.filters.sortOrder)
   const dispatch = useAppDispatch()
+  const canEdit = useCanEdit()
 
   function handleRefresh() {
     void queryClient.invalidateQueries({ queryKey: ['projects'] })
@@ -56,9 +58,11 @@ export function ProjectsLayout() {
               >
                 &#8635; Refresh
               </button>
-              <Link to="/projects/new" className="master-list__new-link">
-                + New
-              </Link>
+              {canEdit && (
+                <Link to="/projects/new" className="master-list__new-link">
+                  + New
+                </Link>
+              )}
             </div>
           </div>
 

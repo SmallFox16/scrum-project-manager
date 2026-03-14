@@ -4,6 +4,16 @@ export interface NavItem {
   icon?: string;
 }
 
+export type UserRole = 'admin' | 'member';
+
+export interface TeamMember {
+  id: string;
+  name: string;
+  email: string;
+  avatarUrl: string;
+  role: string;
+}
+
 export type ProjectStatus = 'active' | 'completed' | 'archived';
 
 export interface ProjectCardProps {

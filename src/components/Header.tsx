@@ -2,8 +2,9 @@
 // Added <SyncIndicator /> to display last sync time (Feature 3).
 
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useTheme } from '../context/ThemeContext'
-import { useAuth, DEFAULT_USER } from '../context/AuthContext'
+import { useAuth } from '../context/AuthContext'
 import { SyncIndicator } from './SyncIndicator'
 
 interface HeaderProps {
@@ -14,7 +15,8 @@ interface HeaderProps {
 
 export function Header({ title, subtitle, onToggleSidebar }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
-  const { user, login, logout } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const [showSuccess, setShowSuccess] = useState(true);
   const [showError, setShowError] = useState(true);
@@ -143,7 +145,7 @@ export function Header({ title, subtitle, onToggleSidebar }: HeaderProps) {
             <button
               type="button"
               className="btn-secondary"
-              onClick={logout}
+              onClick={() => { logout(); navigate('/login'); }}
               style={{ fontSize: '0.8125rem', padding: '0.25rem 0.625rem' }}
             >
               Sign out
@@ -153,7 +155,7 @@ export function Header({ title, subtitle, onToggleSidebar }: HeaderProps) {
           <button
             type="button"
             className="btn-secondary"
-            onClick={() => login(DEFAULT_USER)}
+            onClick={() => navigate('/login')}
             style={{ fontSize: '0.8125rem', padding: '0.25rem 0.625rem' }}
           >
             Sign in
