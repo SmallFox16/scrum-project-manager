@@ -2,20 +2,25 @@ import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { apiFetch } from '../api/client'
 
-// 20 fun creature/character avatars using different dicebear styles and seeds
+// 20 fun creature/character avatars — robots, monsters, and creatures (no emoji)
 const AVATAR_PRESETS = [
   // Bottts — colorful robots
   'https://api.dicebear.com/7.x/bottts/svg?seed=Sparky',
   'https://api.dicebear.com/7.x/bottts/svg?seed=Circuit',
   'https://api.dicebear.com/7.x/bottts/svg?seed=Bolt',
   'https://api.dicebear.com/7.x/bottts/svg?seed=Gizmo',
-  // Fun emoji
-  'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Dragon',
-  'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Ghost',
-  'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Alien',
-  'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Monster',
-  'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Skull',
-  'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Flame',
+  'https://api.dicebear.com/7.x/bottts/svg?seed=Turbo',
+  'https://api.dicebear.com/7.x/bottts/svg?seed=Pixel',
+  // Bottts Neutral — flat-style robots
+  'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Chrome',
+  'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Neon',
+  'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Titan',
+  // Croodles — doodle monsters
+  'https://api.dicebear.com/7.x/croodles/svg?seed=Goblin',
+  'https://api.dicebear.com/7.x/croodles/svg?seed=Troll',
+  'https://api.dicebear.com/7.x/croodles/svg?seed=Yeti',
+  'https://api.dicebear.com/7.x/croodles/svg?seed=Gremlin',
+  'https://api.dicebear.com/7.x/croodles/svg?seed=Ogre',
   // Adventurer — cute animal creatures
   'https://api.dicebear.com/7.x/adventurer/svg?seed=Tiger',
   'https://api.dicebear.com/7.x/adventurer/svg?seed=Bear',
@@ -23,11 +28,6 @@ const AVATAR_PRESETS = [
   'https://api.dicebear.com/7.x/adventurer/svg?seed=Wolf',
   'https://api.dicebear.com/7.x/adventurer/svg?seed=Panda',
   'https://api.dicebear.com/7.x/adventurer/svg?seed=Owl',
-  // Thumbs — quirky characters
-  'https://api.dicebear.com/7.x/thumbs/svg?seed=Rocket',
-  'https://api.dicebear.com/7.x/thumbs/svg?seed=Star',
-  'https://api.dicebear.com/7.x/thumbs/svg?seed=Comet',
-  'https://api.dicebear.com/7.x/thumbs/svg?seed=Nova',
 ]
 
 export function AvatarPicker() {
