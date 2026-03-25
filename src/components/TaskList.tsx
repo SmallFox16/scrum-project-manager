@@ -3,6 +3,7 @@ import { useParams, useOutletContext } from 'react-router-dom'
 import { TaskItem } from './TaskItem'
 import { TaskSearchInput } from './TaskSearchInput'
 import { AddTaskForm } from './AddTaskForm'
+import { DraggableTaskList } from './DraggableTaskList'
 import { ErrorBoundary } from './ErrorBoundary'
 import { useUpdateTask } from '../hooks/mutations/useUpdateTask'
 import { useDeleteTask } from '../hooks/mutations/useDeleteTask'
@@ -19,6 +20,7 @@ export function TaskList({ initialTasks }: TaskListProps) {
 
   const ctx = useOutletContext<ProjectDetailOutletContext | undefined>();
   const tasks = initialTasks ?? ctx?.tasks ?? [];
+  const isProductBacklog = ctx?.isProductBacklog ?? false;
 
   const [searchQuery, setSearchQuery] = useState('');
   const canEdit = useCanEdit();
@@ -72,6 +74,15 @@ export function TaskList({ initialTasks }: TaskListProps) {
         </p>
       ) : filteredTasks.length === 0 ? (
         <p className="task-list__empty">No tasks for this project yet.</p>
+      ) : isProductBacklog && canEdit ? (
+        <DraggableTaskList
+          tasks={filteredTasks}
+          projectId={projectId ?? ''}
+          onStatusChange={handleStatusChange}
+          onAssign={handleAssign}
+          onDelete={handleDelete}
+          isDeleting={deleteTaskMutation.isPending}
+        />
       ) : (
         <ul className="task-list__items">
           {filteredTasks.map((task) => (
@@ -83,6 +94,7 @@ export function TaskList({ initialTasks }: TaskListProps) {
                 onAssign={handleAssign}
                 onDelete={handleDelete}
                 isDeleting={deleteTaskMutation.isPending}
+                isProductBacklog={isProductBacklog}
               />
             </li>
           ))}
@@ -91,7 +103,10 @@ export function TaskList({ initialTasks }: TaskListProps) {
 
       {canEdit && (
         <ErrorBoundary>
-          <AddTaskForm projectId={projectId ?? ''} />
+          <AddTaskForm
+            projectId={projectId ?? ''}
+            isProductBacklog={isProductBacklog}
+          />
         </ErrorBoundary>
       )}
     </div>

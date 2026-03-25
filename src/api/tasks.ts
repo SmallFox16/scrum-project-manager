@@ -13,6 +13,7 @@ import { apiFetch } from './client'
 // ============================================================
 
 const REVERSE_STATUS_MAP: Record<string, string> = {
+  ToBeRefined: 'to_be_refined',
   Todo: 'todo',
   InProgress: 'in_progress',
   InReview: 'in_review',
@@ -26,6 +27,9 @@ function toBackendTaskData(data: Partial<Task>): Record<string, unknown> {
   if (data.status !== undefined) result.status = REVERSE_STATUS_MAP[data.status] ?? data.status
   if (data.assigneeId !== undefined) result.assigned_to = data.assigneeId ? Number(data.assigneeId) : null
   if (data.projectId !== undefined) result.project_id = Number(data.projectId)
+  if (data.sprintProjectId !== undefined) result.sprint_project_id = data.sprintProjectId ? Number(data.sprintProjectId) : null
+  if (data.timeEstimate !== undefined) result.time_estimate = data.timeEstimate || null
+  if (data.dueDate !== undefined) result.due_date = data.dueDate || null
   return result
 }
 
@@ -70,4 +74,28 @@ export async function deleteTask(taskId: string): Promise<void> {
   if (!res.ok) {
     throw new Error(`Failed to delete task: ${res.status}`)
   }
+}
+
+// PUT /api/tasks/reorder — Reorder tasks by priority
+export async function reorderTasks(taskIds: string[]): Promise<void> {
+  const res = await apiFetch('/tasks/reorder', {
+    method: 'PUT',
+    body: JSON.stringify({ taskIds: taskIds.map(Number) }),
+  })
+  if (!res.ok) {
+    throw new Error(`Failed to reorder tasks: ${res.status}`)
+  }
+}
+
+// PUT /api/tasks/:taskId — Link a PBI to a sprint project
+export async function linkPbiToSprint(taskId: string, sprintProjectId: string): Promise<Task> {
+  const res = await apiFetch(`/tasks/${taskId}`, {
+    method: 'PUT',
+    body: JSON.stringify({ sprint_project_id: Number(sprintProjectId) }),
+  })
+  if (!res.ok) {
+    throw new Error(`Failed to link PBI to sprint: ${res.status}`)
+  }
+  const result = await parseJson<{ task: any }>(res)
+  return toFrontendTask(result.task)
 }

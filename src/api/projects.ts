@@ -44,6 +44,11 @@ interface BackendTask {
   status: string;
   assigned_to: number | null;
   project_id: number | null;
+  sprint_project_id: number | null;
+  sprint_project_name: string | null;
+  priority: number;
+  time_estimate: string | null;
+  due_date: string | null;
   created_at: string;
 }
 
@@ -52,6 +57,7 @@ interface BackendTask {
 // ============================================================
 
 const STATUS_MAP: Record<string, Task['status']> = {
+  to_be_refined: 'ToBeRefined',
   todo: 'Todo',
   in_progress: 'InProgress',
   in_review: 'InReview',
@@ -78,8 +84,24 @@ export function toFrontendTask(bt: BackendTask): Task {
     status: STATUS_MAP[bt.status] ?? 'Todo',
     assigneeId: bt.assigned_to ? String(bt.assigned_to) : undefined,
     projectId: bt.project_id ? String(bt.project_id) : '',
+    sprintProjectId: bt.sprint_project_id ? String(bt.sprint_project_id) : undefined,
+    sprintProjectName: bt.sprint_project_name ?? undefined,
+    timeEstimate: bt.time_estimate ?? undefined,
+    dueDate: bt.due_date ?? undefined,
     createdAt: bt.created_at,
   }
+}
+
+// ============================================================
+// Avatar helpers
+// ============================================================
+
+function buildTeamAvatarUrl(name: string, gender?: string): string {
+  const seed = encodeURIComponent(name)
+  if (gender === 'female') {
+    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&top=longHair&facialHairType=blank`
+  }
+  return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&top=shortHair&facialHairType=beardMedium`
 }
 
 // ============================================================
@@ -171,12 +193,23 @@ export async function fetchTeam(): Promise<TeamMember[]> {
   if (!res.ok) {
     throw new Error(`Failed to fetch team: ${res.status}`)
   }
-  const data = await parseJson<{ users: Array<{ id: number; name: string; email: string; role: string }> }>(res)
+  const data = await parseJson<{ users: Array<{ id: number; name: string; email: string; role: string; gender?: string }> }>(res)
   return data.users.map((u) => ({
     id: String(u.id),
     name: u.name,
     email: u.email,
-    avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(u.name)}`,
+    avatarUrl: buildTeamAvatarUrl(u.name, u.gender),
     role: u.role,
+    gender: u.gender,
   }))
+}
+
+// GET /api/tasks/backlog-items — Available PBIs for sprint linking
+export async function fetchBacklogItems(): Promise<Task[]> {
+  const res = await apiFetch('/tasks/backlog-items')
+  if (!res.ok) {
+    throw new Error(`Failed to fetch backlog items: ${res.status}`)
+  }
+  const data = await parseJson<{ tasks: BackendTask[] }>(res)
+  return data.tasks.map(toFrontendTask)
 }

@@ -23,10 +23,18 @@ interface AuthContextValue {
 // Helpers
 // ============================================================
 
+function buildAvatarUrl(name: string, gender?: string): string {
+  const seed = encodeURIComponent(name)
+  if (gender === 'female') {
+    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&top=longHair&facialHairType=blank`
+  }
+  return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&top=shortHair&facialHairType=beardMedium`
+}
+
 function toUser(authUser: AuthUser): User {
   return {
     ...authUser,
-    avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(authUser.name)}`,
+    avatarUrl: buildAvatarUrl(authUser.name, authUser.gender),
   }
 }
 
@@ -35,7 +43,7 @@ const MOCK_USER: User = {
   name: 'Admin',
   email: 'admin@scrum.com',
   role: 'admin',
-  avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Admin',
+  avatarUrl: buildAvatarUrl('Admin', 'male'),
 }
 
 // ============================================================

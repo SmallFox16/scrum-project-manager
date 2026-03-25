@@ -12,6 +12,7 @@ export interface TeamMember {
   email: string;
   avatarUrl: string;
   role: string;
+  gender?: string;
 }
 
 export type ProjectStatus = 'active' | 'completed' | 'archived';
@@ -37,7 +38,7 @@ export interface FormErrors {
   description?: string;
 }
 
-export type TaskStatus = 'Todo' | 'InProgress' | 'InReview' | 'Done';
+export type TaskStatus = 'ToBeRefined' | 'Todo' | 'InProgress' | 'InReview' | 'Done';
 
 export interface Task {
   id: string;
@@ -47,6 +48,9 @@ export interface Task {
   assigneeId?: string;
   projectId: string;
   dueDate?: string;
+  timeEstimate?: string;
+  sprintProjectId?: string;
+  sprintProjectName?: string;
   createdAt: string;
   completedAt?: string;
 }

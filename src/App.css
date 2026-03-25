@@ -492,6 +492,242 @@
   color: #86efac;
 }
 
+.status-badge--ToBeRefined {
+  background-color: #fef3c7;
+  color: #78350f;
+}
+
+[data-theme="dark"] .status-badge--ToBeRefined {
+  background-color: #78350f;
+  color: #fef3c7;
+}
+
+/* ============================================================
+   Task Status Dropdown
+   ============================================================ */
+
+.task-status-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.task-status-dropdown__menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 20;
+  min-width: 160px;
+  margin-top: 0.25rem;
+  padding: 0.25rem 0;
+  list-style: none;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.task-status-dropdown__item {
+  display: block;
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  border: none;
+  background: none;
+  text-align: left;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 0;
+}
+
+.task-status-dropdown__item:hover {
+  background-color: var(--color-surface-hover);
+}
+
+/* ============================================================
+   Draggable Task List
+   ============================================================ */
+
+.task-list__items--draggable {
+  list-style: none;
+  padding: 0;
+}
+
+.draggable-task-item {
+  display: flex;
+  align-items: stretch;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.draggable-task-item__handle {
+  display: flex;
+  align-items: center;
+  padding: 0 0.375rem;
+  cursor: grab;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.draggable-task-item__handle:active {
+  cursor: grabbing;
+}
+
+.draggable-task-item__content {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ============================================================
+   Task Item Meta (sprint, time, date badges)
+   ============================================================ */
+
+.task-item__meta {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
+
+.task-item__meta:empty {
+  display: none;
+}
+
+.task-item__sprint-badge,
+.task-item__time-badge,
+.task-item__date-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  background-color: var(--color-surface);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+}
+
+.task-item__sprint-badge {
+  background-color: #eff6ff;
+  color: #1e40af;
+}
+
+[data-theme="dark"] .task-item__sprint-badge {
+  background-color: #1e1b4b;
+  color: #a5b4fc;
+}
+
+/* ============================================================
+   Add Task Form — PBI Picker
+   ============================================================ */
+
+.add-task-form__pbi-picker {
+  padding: 0.75rem 0;
+}
+
+.add-task-form__pbi-heading {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--color-heading);
+}
+
+.add-task-form__pbi-loading,
+.add-task-form__pbi-empty {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.add-task-form__pbi-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.75rem;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+}
+
+.add-task-form__pbi-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.8125rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.add-task-form__pbi-item:last-child {
+  border-bottom: none;
+}
+
+.add-task-form__pbi-item:hover {
+  background-color: var(--color-surface-hover);
+}
+
+.add-task-form__pbi-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.add-task-form__pbi-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 0.5rem;
+}
+
+.add-task-form__pbi-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.add-task-form__pbi-custom {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  border: 1px dashed var(--color-border);
+  border-radius: 6px;
+  background: none;
+  color: var(--color-accent);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.add-task-form__pbi-custom:hover {
+  background-color: var(--color-surface-hover);
+}
+
+/* ============================================================
+   Add Task Form — Time/Date Toggle
+   ============================================================ */
+
+.add-task-form__time-date-toggle {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.25rem 0;
+}
+
+.add-task-form__radio-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8125rem;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
 /* ============================================================
    Modal
    ============================================================ */

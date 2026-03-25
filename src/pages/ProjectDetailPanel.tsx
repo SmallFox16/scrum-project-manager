@@ -14,6 +14,7 @@ import type { ProjectWithTasks } from '../api/projects'
 
 export type ProjectDetailOutletContext = {
   tasks: Task[];
+  isProductBacklog: boolean;
 };
 
 export function ProjectDetailPanel() {
@@ -73,6 +74,8 @@ function ProjectDetailContent({ project }: ProjectDetailContentProps) {
   const deleteProject = useDeleteProject();
   const updateProject = useUpdateProject(project.id);
 
+  const isProductBacklog = project.name === 'Product Backlog';
+
   useDocumentTitle(`${project.name} | Scrum Project Manager`);
 
   function handleStatusChange(newStatus: ProjectStatus) {
@@ -90,7 +93,10 @@ function ProjectDetailContent({ project }: ProjectDetailContentProps) {
   const isOverdue =
     project.dueDate !== undefined && new Date(project.dueDate) < new Date();
 
-  const outletContext: ProjectDetailOutletContext = { tasks: project.tasks };
+  const outletContext: ProjectDetailOutletContext = {
+    tasks: project.tasks,
+    isProductBacklog,
+  };
 
   return (
     <div className="project-detail-panel">
@@ -100,13 +106,15 @@ function ProjectDetailContent({ project }: ProjectDetailContentProps) {
       <header className="project-detail-panel__header">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h2 className="project-detail-panel__title">{project.name}</h2>
-          <button
-            className="btn-danger"
-            onClick={handleDelete}
-            disabled={deleteProject.isPending}
-          >
-            {deleteProject.isPending ? 'Deleting...' : 'Delete Project'}
-          </button>
+          {!isProductBacklog && (
+            <button
+              className="btn-danger"
+              onClick={handleDelete}
+              disabled={deleteProject.isPending}
+            >
+              {deleteProject.isPending ? 'Deleting...' : 'Delete Project'}
+            </button>
+          )}
         </div>
         <p className="project-detail-panel__description">{project.description}</p>
 

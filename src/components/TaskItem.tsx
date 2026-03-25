@@ -19,6 +19,7 @@ interface TaskItemProps {
   onAssign: (taskId: string, assigneeId: string | undefined) => void;
   onDelete: (taskId: string) => void;
   isDeleting?: boolean;
+  isProductBacklog?: boolean;
 }
 
 export const TaskItem = memo(function TaskItem({
@@ -28,6 +29,7 @@ export const TaskItem = memo(function TaskItem({
   onAssign,
   onDelete,
   isDeleting = false,
+  isProductBacklog = false,
 }: TaskItemProps) {
   const [showUndoToast, setShowUndoToast] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -75,6 +77,25 @@ export const TaskItem = memo(function TaskItem({
             >
               &#10005;
             </button>
+          )}
+        </div>
+
+        {/* Meta info: sprint, time estimate, due date */}
+        <div className="task-item__meta">
+          {isProductBacklog && task.sprintProjectName && (
+            <span className="task-item__sprint-badge">
+              Sprint: {task.sprintProjectName}
+            </span>
+          )}
+          {task.timeEstimate && (
+            <span className="task-item__time-badge">
+              Est: {task.timeEstimate}
+            </span>
+          )}
+          {task.dueDate && (
+            <span className="task-item__date-badge">
+              Due: {task.dueDate}
+            </span>
           )}
         </div>
 
