@@ -99,9 +99,9 @@ export function toFrontendTask(bt: BackendTask): Task {
 function buildTeamAvatarUrl(name: string, gender?: string): string {
   const seed = encodeURIComponent(name)
   if (gender === 'female') {
-    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&top=longHairStraight&facialHair=blank`
+    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&top=straight01&facialHairProbability=0`
   }
-  return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&top=shortHairShortFlat&facialHair=beardMedium`
+  return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&top=shortFlat&facialHair=beardMedium`
 }
 
 // ============================================================
@@ -193,12 +193,12 @@ export async function fetchTeam(): Promise<TeamMember[]> {
   if (!res.ok) {
     throw new Error(`Failed to fetch team: ${res.status}`)
   }
-  const data = await parseJson<{ users: Array<{ id: number; name: string; email: string; role: string; gender?: string }> }>(res)
+  const data = await parseJson<{ users: Array<{ id: number; name: string; email: string; role: string; gender?: string; avatar?: string | null }> }>(res)
   return data.users.map((u) => ({
     id: String(u.id),
     name: u.name,
     email: u.email,
-    avatarUrl: buildTeamAvatarUrl(u.name, u.gender),
+    avatarUrl: u.avatar || buildTeamAvatarUrl(u.name, u.gender),
     role: u.role,
     gender: u.gender,
   }))

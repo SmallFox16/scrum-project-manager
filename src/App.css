@@ -122,6 +122,106 @@
   flex-shrink: 0;
 }
 
+/* ============================================================
+   Avatar Picker
+   ============================================================ */
+
+.avatar-picker-wrapper {
+  position: relative;
+}
+
+.avatar-picker-trigger {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: box-shadow 0.15s;
+}
+
+.avatar-picker-trigger:hover {
+  box-shadow: 0 0 0 3px var(--color-accent);
+  border-radius: 50%;
+}
+
+.avatar-picker-trigger .header-avatar {
+  pointer-events: none;
+}
+
+.avatar-picker-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+}
+
+.avatar-picker-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 100;
+  width: 320px;
+  padding: 1rem;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  animation: dropdown-fade-in 0.15s ease-out;
+}
+
+[data-theme="dark"] .avatar-picker-panel {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.avatar-picker-title {
+  margin: 0 0 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+
+.avatar-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+}
+
+.avatar-picker-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.375rem;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  background-color: var(--color-surface);
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.1s, background-color 0.15s;
+}
+
+.avatar-picker-option:hover {
+  border-color: var(--color-accent);
+  transform: scale(1.08);
+  background-color: var(--color-surface-hover);
+}
+
+.avatar-picker-option--selected {
+  border-color: var(--color-accent);
+  background-color: var(--color-surface-hover);
+  box-shadow: 0 0 0 2px var(--color-accent);
+}
+
+.avatar-picker-option:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.avatar-picker-option img {
+  border-radius: 6px;
+}
+
 .header-user-name {
   font-size: 0.875rem;
   font-weight: 500;

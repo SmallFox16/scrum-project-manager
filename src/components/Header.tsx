@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { useTheme } from '../context/ThemeContext'
 import { useAuth } from '../context/AuthContext'
 import { SyncIndicator } from './SyncIndicator'
+import { AvatarPicker } from './AvatarPicker'
 
 interface HeaderProps {
   title: string;
@@ -134,13 +135,7 @@ export function Header({ title, subtitle, onToggleSidebar }: HeaderProps) {
 
         {user !== null ? (
           <div className="header-user">
-            <img
-              src={user.avatarUrl}
-              alt={`${user.name}'s avatar`}
-              className="header-avatar"
-              width={32}
-              height={32}
-            />
+            <AvatarPicker />
             <span className="header-user-name">{user.name}</span>
             <button
               type="button"

@@ -16,6 +16,7 @@ interface AuthContextValue {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  setAvatar: (avatarUrl: string) => void;
   role: UserRole | null;
 }
 
@@ -23,18 +24,12 @@ interface AuthContextValue {
 // Helpers
 // ============================================================
 
-function buildAvatarUrl(name: string, gender?: string): string {
-  const seed = encodeURIComponent(name)
-  if (gender === 'female') {
-    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&top=longHairStraight&facialHair=blank`
-  }
-  return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&top=shortHairShortFlat&facialHair=beardMedium`
-}
+const DEFAULT_AVATAR = 'https://api.dicebear.com/7.x/bottts/svg?seed=Sparky'
 
 function toUser(authUser: AuthUser): User {
   return {
     ...authUser,
-    avatarUrl: buildAvatarUrl(authUser.name, authUser.gender),
+    avatarUrl: authUser.avatar || DEFAULT_AVATAR,
   }
 }
 
@@ -43,7 +38,7 @@ const MOCK_USER: User = {
   name: 'Admin',
   email: 'admin@scrum.com',
   role: 'admin',
-  avatarUrl: buildAvatarUrl('Admin', 'male'),
+  avatarUrl: DEFAULT_AVATAR,
 }
 
 // ============================================================
@@ -105,15 +100,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setUser(null)
   }, [])
 
+  const setAvatar = useCallback((avatarUrl: string) => {
+    setUser((prev) => prev ? { ...prev, avatarUrl } : prev)
+  }, [])
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
       isLoading,
       login,
       logout,
+      setAvatar,
       role: user?.role ?? null,
     }),
-    [user, isLoading, login, logout],
+    [user, isLoading, login, logout, setAvatar],
   )
 
   return (
