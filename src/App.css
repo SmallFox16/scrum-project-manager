@@ -513,33 +513,75 @@
 
 .task-status-dropdown__menu {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 4px);
   left: 0;
   z-index: 20;
-  min-width: 160px;
-  margin-top: 0.25rem;
-  padding: 0.25rem 0;
+  min-width: 170px;
+  padding: 0.375rem;
   list-style: none;
   background-color: var(--color-bg);
   border: 1px solid var(--color-border);
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06);
+  animation: dropdown-fade-in 0.12s ease-out;
+}
+
+@keyframes dropdown-fade-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+[data-theme="dark"] .task-status-dropdown__menu {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.task-status-dropdown__menu li {
+  margin: 0;
 }
 
 .task-status-dropdown__item {
-  display: block;
+  display: flex;
+  align-items: center;
   width: 100%;
-  padding: 0.375rem 0.75rem;
+  padding: 0.4375rem 0.625rem;
   border: none;
   background: none;
   text-align: left;
   font-size: 0.8125rem;
   font-weight: 500;
+  color: var(--color-text);
   cursor: pointer;
-  border-radius: 0;
+  border-radius: 5px;
+  transition: background-color 0.1s;
 }
 
 .task-status-dropdown__item:hover {
+  background-color: var(--color-surface-hover);
+}
+
+.task-status-dropdown__item::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+}
+
+.task-status-dropdown__item.status-badge--ToBeRefined::before { background-color: #f59e0b; }
+.task-status-dropdown__item.status-badge--Todo::before        { background-color: #64748b; }
+.task-status-dropdown__item.status-badge--InProgress::before  { background-color: #f59e0b; }
+.task-status-dropdown__item.status-badge--InReview::before    { background-color: #8b5cf6; }
+.task-status-dropdown__item.status-badge--Done::before        { background-color: #22c55e; }
+
+/* Reset the badge background/color overrides on dropdown items — they use the dot instead */
+.task-status-dropdown__item[class*="status-badge--"] {
+  background-color: transparent;
+  color: var(--color-text);
+}
+
+.task-status-dropdown__item[class*="status-badge--"]:hover {
   background-color: var(--color-surface-hover);
 }
 
@@ -1432,7 +1474,10 @@
   gap: 0.75rem;
 }
 
-.task-item__title {
+.task-item__title,
+a.task-item__title,
+a.task-item__title:link,
+a.task-item__title:visited {
   flex: 1;
   font-size: 0.9375rem;
   font-weight: 500;
@@ -1443,7 +1488,8 @@
   text-decoration: none;
 }
 
-.task-item__title:hover {
+.task-item__title:hover,
+a.task-item__title:hover {
   text-decoration: underline;
   color: var(--color-accent);
 }
