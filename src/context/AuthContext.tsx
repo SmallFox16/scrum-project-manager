@@ -26,9 +26,9 @@ interface AuthContextValue {
 function buildAvatarUrl(name: string, gender?: string): string {
   const seed = encodeURIComponent(name)
   if (gender === 'female') {
-    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&top=longHair&facialHairType=blank`
+    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&top=longHairStraight&facialHair=blank`
   }
-  return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&top=shortHair&facialHairType=beardMedium`
+  return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&top=shortHairShortFlat&facialHair=beardMedium`
 }
 
 function toUser(authUser: AuthUser): User {
