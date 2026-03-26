@@ -1,15 +1,3 @@
-// Challenge 26 — Capstone: Feature 1 — Team Member Assignment
-//
-// A searchable combobox that fetches team members from /api/team
-// and allows the user to assign or unassign a team member to a task.
-//
-// ARIA combobox pattern (WAI-ARIA 1.2):
-//   - The text input has role="combobox"
-//   - The dropdown list has role="listbox" and id referenced by aria-controls
-//   - Each option has role="option" and a unique id
-//   - aria-activedescendant on the input tracks the highlighted option
-//   - aria-expanded reflects whether the dropdown is open
-
 import {
   useState,
   useRef,
@@ -19,17 +7,17 @@ import {
   useCallback,
 } from 'react'
 import { useTeam } from '../hooks/queries/useTeam'
-import type { TeamMember } from '../mocks/data'
+import type { TaskAssignee } from '../types'
 
 interface TeamMemberSelectProps {
   taskId: string;
-  assigneeId: string | undefined;
-  onAssign: (taskId: string, assigneeId: string | undefined) => void;
+  assignees: TaskAssignee[];
+  onAssign: (taskId: string, assignees: TaskAssignee[]) => void;
 }
 
 export function TeamMemberSelect({
   taskId,
-  assigneeId,
+  assignees,
   onAssign,
 }: TeamMemberSelectProps) {
   const { data: teamMembers = [], isPending } = useTeam()
@@ -43,11 +31,7 @@ export function TeamMemberSelect({
   const listId = useId()
   const optionIdPrefix = useId()
 
-  // The currently assigned member (for display)
-  const selectedMember = useMemo(
-    () => teamMembers.find((m) => m.id === assigneeId),
-    [teamMembers, assigneeId],
-  )
+  const assigneeIds = useMemo(() => new Set(assignees.map((a) => a.id)), [assignees])
 
   // Filter members client-side based on what the user has typed
   const filteredMembers = useMemo(() => {
@@ -67,20 +51,28 @@ export function TeamMemberSelect({
     setInputValue('')
   }, [])
 
-  // Select a member by their object
-  const selectMember = useCallback(
-    (member: TeamMember) => {
-      onAssign(taskId, member.id)
-      closeDropdown()
+  // Toggle a member (add or remove)
+  const toggleMember = useCallback(
+    (memberId: string, memberName: string) => {
+      let newAssignees: TaskAssignee[]
+      if (assigneeIds.has(memberId)) {
+        newAssignees = assignees.filter((a) => a.id !== memberId)
+      } else {
+        newAssignees = [...assignees, { id: memberId, name: memberName }]
+      }
+      onAssign(taskId, newAssignees)
     },
-    [taskId, onAssign, closeDropdown],
+    [taskId, assignees, assigneeIds, onAssign],
   )
 
-  // Unassign
-  const unassign = useCallback(() => {
-    onAssign(taskId, undefined)
-    closeDropdown()
-  }, [taskId, onAssign, closeDropdown])
+  // Remove a specific assignee
+  const removeAssignee = useCallback(
+    (memberId: string) => {
+      const newAssignees = assignees.filter((a) => a.id !== memberId)
+      onAssign(taskId, newAssignees)
+    },
+    [taskId, assignees, onAssign],
+  )
 
   // Close dropdown when clicking outside the component
   useEffect(() => {
@@ -134,7 +126,8 @@ export function TeamMemberSelect({
       case 'Enter': {
         e.preventDefault()
         if (activeIndex >= 0 && activeIndex < filteredMembers.length) {
-          selectMember(filteredMembers[activeIndex])
+          const m = filteredMembers[activeIndex]
+          toggleMember(m.id, m.name)
         }
         break
       }
@@ -152,11 +145,8 @@ export function TeamMemberSelect({
   if (isPending) {
     return (
       <div className="team-member-select">
-        <span className="team-member-select__label">Assignee:</span>
-        <span
-          className="team-member-select__loading"
-          aria-label="Loading team members"
-        >
+        <span className="team-member-select__label">Assignees:</span>
+        <span className="team-member-select__loading" aria-label="Loading team members">
           Loading...
         </span>
       </div>
@@ -166,48 +156,41 @@ export function TeamMemberSelect({
   return (
     <div className="team-member-select" ref={wrapperRef}>
       <span className="team-member-select__label" id={`${optionIdPrefix}-label`}>
-        Assignee:
+        Assignees:
       </span>
 
-      {/* Show selected member chip when assigned and dropdown is closed */}
-      {selectedMember !== undefined && !isOpen && (
-        <div className="team-member-select__selected">
-          <img
-            src={selectedMember.avatarUrl}
-            alt=""
-            className="team-member-select__avatar"
-            width={20}
-            height={20}
-            aria-hidden="true"
-          />
-          <span className="team-member-select__selected-name">
-            {selectedMember.name}
-          </span>
+      {/* Show assigned member chips */}
+      {assignees.length > 0 && !isOpen && (
+        <div className="team-member-select__chips">
+          {assignees.map((a) => (
+            <span key={a.id} className="team-member-select__chip">
+              {a.name}
+              <button
+                type="button"
+                className="team-member-select__chip-remove"
+                onClick={() => removeAssignee(a.id)}
+                aria-label={`Remove ${a.name}`}
+              >
+                &#10005;
+              </button>
+            </span>
+          ))}
           <button
             type="button"
-            className="team-member-select__clear-btn"
-            onClick={unassign}
-            aria-label={`Unassign ${selectedMember.name}`}
-            title="Unassign"
-          >
-            &#10005;
-          </button>
-          <button
-            type="button"
-            className="team-member-select__change-btn"
+            className="team-member-select__add-btn"
             onClick={() => {
               setIsOpen(true)
               setTimeout(() => inputRef.current?.focus(), 0)
             }}
-            aria-label="Change assignee"
+            aria-label="Add assignee"
           >
-            Change
+            +
           </button>
         </div>
       )}
 
-      {/* Combobox input — shown when unassigned or dropdown is open */}
-      {(selectedMember === undefined || isOpen) && (
+      {/* Combobox input — shown when no assignees or dropdown is open */}
+      {(assignees.length === 0 || isOpen) && (
         <div className="team-member-select__input-wrapper">
           <input
             ref={inputRef}
@@ -219,7 +202,7 @@ export function TeamMemberSelect({
             aria-labelledby={`${optionIdPrefix}-label`}
             aria-autocomplete="list"
             className="team-member-select__input"
-            placeholder={selectedMember !== undefined ? selectedMember.name : 'Search team...'}
+            placeholder="Search team..."
             value={inputValue}
             onChange={handleInputChange}
             onFocus={handleInputFocus}
@@ -232,23 +215,9 @@ export function TeamMemberSelect({
               id={listId}
               role="listbox"
               aria-label="Team members"
+              aria-multiselectable="true"
               className="team-member-select__listbox"
             >
-              {/* Unassign option */}
-              {assigneeId !== undefined && (
-                <li
-                  role="option"
-                  aria-selected={false}
-                  className="team-member-select__option team-member-select__option--unassign"
-                  onMouseDown={(e) => {
-                    e.preventDefault()
-                    unassign()
-                  }}
-                >
-                  <span aria-hidden="true">&#10005;</span> Unassign
-                </li>
-              )}
-
               {filteredMembers.length === 0 ? (
                 <li
                   role="option"
@@ -262,7 +231,7 @@ export function TeamMemberSelect({
                 filteredMembers.map((member, index) => {
                   const optionId = `${optionIdPrefix}-opt-${index}`
                   const isActive = index === activeIndex
-                  const isSelected = member.id === assigneeId
+                  const isSelected = assigneeIds.has(member.id)
 
                   return (
                     <li
@@ -279,7 +248,7 @@ export function TeamMemberSelect({
                         .join(' ')}
                       onMouseDown={(e) => {
                         e.preventDefault()
-                        selectMember(member)
+                        toggleMember(member.id, member.name)
                       }}
                       onMouseEnter={() => setActiveIndex(index)}
                     >

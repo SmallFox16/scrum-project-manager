@@ -21,6 +21,7 @@ export function useCreateTask(projectId: string) {
           title: newTaskData.title ?? 'New Task',
           description: newTaskData.description ?? '',
           status: 'Todo',
+          assignees: [],
           projectId,
           createdAt: new Date().toISOString(),
           ...newTaskData,

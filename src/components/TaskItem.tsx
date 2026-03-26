@@ -16,7 +16,7 @@ interface TaskItemProps {
   task: Task;
   projectId: string;
   onStatusChange: (taskId: string, newStatus: TaskStatus, completedAt?: string) => void;
-  onAssign: (taskId: string, assigneeId: string | undefined) => void;
+  onAssign: (taskId: string, assignees: import('../types').TaskAssignee[]) => void;
   onDelete: (taskId: string) => void;
   isDeleting?: boolean;
   isProductBacklog?: boolean;
@@ -105,10 +105,9 @@ export const TaskItem = memo(function TaskItem({
               task={task}
               onStatusChange={onStatusChange}
             />
-            {/* Feature 1: searchable combobox replaces basic select */}
             <TeamMemberSelect
               taskId={task.id}
-              assigneeId={task.assigneeId}
+              assignees={task.assignees ?? []}
               onAssign={onAssign}
             />
           </div>

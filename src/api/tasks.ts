@@ -26,6 +26,7 @@ function toBackendTaskData(data: Partial<Task>): Record<string, unknown> {
   if (data.description !== undefined) result.description = data.description
   if (data.status !== undefined) result.status = REVERSE_STATUS_MAP[data.status] ?? data.status
   if (data.assigneeId !== undefined) result.assigned_to = data.assigneeId ? Number(data.assigneeId) : null
+  if (data.assignees !== undefined) result.assignee_ids = data.assignees.map((a) => Number(a.id))
   if (data.projectId !== undefined) result.project_id = Number(data.projectId)
   if (data.sprintProjectId !== undefined) result.sprint_project_id = data.sprintProjectId ? Number(data.sprintProjectId) : null
   if (data.timeEstimate !== undefined) result.time_estimate = data.timeEstimate || null

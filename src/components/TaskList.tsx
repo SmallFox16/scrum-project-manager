@@ -7,7 +7,7 @@ import { DraggableTaskList } from './DraggableTaskList'
 import { ErrorBoundary } from './ErrorBoundary'
 import { useUpdateTask } from '../hooks/mutations/useUpdateTask'
 import { useDeleteTask } from '../hooks/mutations/useDeleteTask'
-import type { Task, TaskStatus } from '../types'
+import type { Task, TaskStatus, TaskAssignee } from '../types'
 import type { ProjectDetailOutletContext } from '../pages/ProjectDetailPanel'
 import { useCanEdit } from '../hooks/useCanEdit'
 
@@ -42,8 +42,8 @@ export function TaskList({ initialTasks }: TaskListProps) {
   );
 
   const handleAssign = useCallback(
-    (taskId: string, assigneeId: string | undefined) => {
-      updateTaskMutation.mutate({ taskId, data: { assigneeId } });
+    (taskId: string, assignees: TaskAssignee[]) => {
+      updateTaskMutation.mutate({ taskId, data: { assignees } });
     },
     [updateTaskMutation],
   );

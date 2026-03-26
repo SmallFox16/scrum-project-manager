@@ -24,7 +24,7 @@ interface DraggableTaskListProps {
   tasks: Task[];
   projectId: string;
   onStatusChange: (taskId: string, newStatus: TaskStatus, completedAt?: string) => void;
-  onAssign: (taskId: string, assigneeId: string | undefined) => void;
+  onAssign: (taskId: string, assignees: import('../types').TaskAssignee[]) => void;
   onDelete: (taskId: string) => void;
   isDeleting: boolean;
 }
@@ -33,7 +33,7 @@ interface SortableTaskItemProps {
   task: Task;
   projectId: string;
   onStatusChange: (taskId: string, newStatus: TaskStatus, completedAt?: string) => void;
-  onAssign: (taskId: string, assigneeId: string | undefined) => void;
+  onAssign: (taskId: string, assignees: import('../types').TaskAssignee[]) => void;
   onDelete: (taskId: string) => void;
   isDeleting: boolean;
 }

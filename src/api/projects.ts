@@ -37,12 +37,19 @@ interface BackendProject {
   created_at: string;
 }
 
+interface BackendAssignee {
+  id: number;
+  name: string;
+  avatar?: string | null;
+}
+
 interface BackendTask {
   id: number;
   title: string;
   description: string | null;
   status: string;
   assigned_to: number | null;
+  assignees?: BackendAssignee[];
   project_id: number | null;
   sprint_project_id: number | null;
   sprint_project_name: string | null;
@@ -77,12 +84,18 @@ function toFrontendProject(bp: BackendProject, taskCount = 0): Project {
 }
 
 export function toFrontendTask(bt: BackendTask): Task {
+  const assignees = (bt.assignees ?? []).map((a) => ({
+    id: String(a.id),
+    name: a.name,
+    avatar: a.avatar,
+  }));
   return {
     id: String(bt.id),
     title: bt.title,
     description: bt.description ?? '',
     status: STATUS_MAP[bt.status] ?? 'Todo',
     assigneeId: bt.assigned_to ? String(bt.assigned_to) : undefined,
+    assignees,
     projectId: bt.project_id ? String(bt.project_id) : '',
     sprintProjectId: bt.sprint_project_id ? String(bt.sprint_project_id) : undefined,
     sprintProjectName: bt.sprint_project_name ?? undefined,

@@ -40,12 +40,19 @@ export interface FormErrors {
 
 export type TaskStatus = 'ToBeRefined' | 'Todo' | 'InProgress' | 'InReview' | 'Done';
 
+export interface TaskAssignee {
+  id: string;
+  name: string;
+  avatar?: string | null;
+}
+
 export interface Task {
   id: string;
   title: string;
   description: string;
   status: TaskStatus;
   assigneeId?: string;
+  assignees: TaskAssignee[];
   projectId: string;
   dueDate?: string;
   timeEstimate?: string;
