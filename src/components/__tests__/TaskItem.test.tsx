@@ -13,6 +13,7 @@ function makeTask(overrides: Partial<Task> = {}): Task {
     title: 'Set up CI pipeline',
     description: 'Configure GitHub Actions',
     status: 'Todo',
+    assignees: [],
     createdAt: new Date().toISOString(),
     ...overrides,
   };
@@ -20,7 +21,7 @@ function makeTask(overrides: Partial<Task> = {}): Task {
 
 function renderTaskItem(task: Task, props: {
   onStatusChange?: (id: string, status: Task['status'], completedAt?: string) => void;
-  onAssign?: (id: string, assigneeId: string | undefined) => void;
+  onAssign?: (taskId: string, assignees: import('../../types').TaskAssignee[]) => void;
   onDelete?: (id: string) => void;
 } = {}) {
   const queryClient = new QueryClient({

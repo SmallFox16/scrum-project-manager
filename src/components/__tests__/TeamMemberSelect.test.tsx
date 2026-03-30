@@ -21,13 +21,13 @@ import { renderWithProviders } from '../../test/utils'
 import { TeamMemberSelect } from '../TeamMemberSelect'
 
 function renderSelect(props: {
-  assigneeId?: string;
-  onAssign?: (taskId: string, assigneeId: string | undefined) => void;
-}) {
+  assignees?: import('../../types').TaskAssignee[];
+  onAssign?: (taskId: string, assignees: import('../../types').TaskAssignee[]) => void;
+} = {}) {
   return renderWithProviders(
     <TeamMemberSelect
       taskId="task-1"
-      assigneeId={props.assigneeId}
+      assignees={props.assignees ?? []}
       onAssign={props.onAssign ?? vi.fn()}
     />,
   )
@@ -113,7 +113,7 @@ describe('TeamMemberSelect', () => {
 
     await user.click(screen.getByText('Sarah Chen'))
 
-    expect(onAssign).toHaveBeenCalledWith('task-1', 'tm-1')
+    expect(onAssign).toHaveBeenCalledWith('task-1', [{ id: 'tm-1', name: 'Sarah Chen' }])
   })
 
   it('navigates options with Arrow Down and selects with Enter', async () => {
@@ -133,7 +133,7 @@ describe('TeamMemberSelect', () => {
     // Select it
     await user.keyboard('{Enter}')
 
-    expect(onAssign).toHaveBeenCalledWith('task-1', teamMembers[0].id)
+    expect(onAssign).toHaveBeenCalledWith('task-1', [{ id: teamMembers[0].id, name: teamMembers[0].name }])
   })
 
   it('closes the dropdown when Escape is pressed', async () => {
@@ -154,30 +154,30 @@ describe('TeamMemberSelect', () => {
     )
   })
 
-  it('shows selected member chip when assigneeId is set', async () => {
-    renderSelect({ assigneeId: 'tm-3' })
+  it('shows selected member chip when assignees are set', async () => {
+    renderSelect({ assignees: [{ id: 'tm-3', name: 'Emily Rodriguez' }] })
 
-    // Should show Emily Rodriguez's name (she's tm-3)
+    // Should show Emily Rodriguez's name
     await waitFor(() => {
       expect(screen.getByText('Emily Rodriguez')).toBeInTheDocument()
     })
-    // Combobox input should not be visible when showing chip
+    // Combobox input should not be visible when showing chips
     expect(screen.queryByRole('combobox')).not.toBeInTheDocument()
   })
 
-  it('calls onAssign(undefined) when clear button is clicked', async () => {
+  it('calls onAssign with empty array when remove button is clicked', async () => {
     const user = userEvent.setup()
     const onAssign = vi.fn()
-    renderSelect({ assigneeId: 'tm-1', onAssign })
+    renderSelect({ assignees: [{ id: 'tm-1', name: 'Sarah Chen' }], onAssign })
 
     await waitFor(() =>
       expect(screen.getByText('Sarah Chen')).toBeInTheDocument(),
     )
 
-    const clearBtn = screen.getByRole('button', { name: /unassign sarah chen/i })
-    await user.click(clearBtn)
+    const removeBtn = screen.getByRole('button', { name: /remove sarah chen/i })
+    await user.click(removeBtn)
 
-    expect(onAssign).toHaveBeenCalledWith('task-1', undefined)
+    expect(onAssign).toHaveBeenCalledWith('task-1', [])
   })
 
   it('shows loading state while team is being fetched', async () => {

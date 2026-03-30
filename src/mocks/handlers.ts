@@ -186,6 +186,7 @@ export const handlers = [
       description: body.description ?? '',
       status: REVERSE_STATUS[body.status] ?? body.status ?? 'Todo',
       assigneeId: body.assigned_to ? `tm-${body.assigned_to}` : undefined,
+      assignees: [],
       projectId: projectId || (tasks.length > 0 ? tasks[0].projectId : ''),
       createdAt: new Date().toISOString(),
     }
