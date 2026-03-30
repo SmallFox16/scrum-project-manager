@@ -82,12 +82,23 @@ export function DraggableTaskList({
   onDelete,
   isDeleting,
 }: DraggableTaskListProps) {
-  const [orderedTasks, setOrderedTasks] = useState<Task[]>(tasks)
+  const [orderedIds, setOrderedIds] = useState<string[]>(() => tasks.map((t) => t.id))
 
-  // Sync when tasks prop changes (e.g. after server refetch)
-  if (tasks.length !== orderedTasks.length || tasks.some((t, i) => t.id !== orderedTasks[i]?.id)) {
-    setOrderedTasks(tasks)
+  // Build a lookup so we always use fresh task data from props
+  const taskMap = new Map(tasks.map((t) => [t.id, t]))
+
+  // Sync ordered IDs when tasks are added or removed
+  if (
+    tasks.length !== orderedIds.length ||
+    tasks.some((t) => !orderedIds.includes(t.id))
+  ) {
+    setOrderedIds(tasks.map((t) => t.id))
   }
+
+  // Derive the rendered list: local order + fresh task data from props
+  const orderedTasks = orderedIds
+    .map((id) => taskMap.get(id))
+    .filter((t): t is Task => t !== undefined)
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -99,15 +110,15 @@ export function DraggableTaskList({
       const { active, over } = event
       if (!over || active.id === over.id) return
 
-      setOrderedTasks((prev) => {
-        const oldIndex = prev.findIndex((t) => t.id === active.id)
-        const newIndex = prev.findIndex((t) => t.id === over.id)
+      setOrderedIds((prev) => {
+        const oldIndex = prev.indexOf(String(active.id))
+        const newIndex = prev.indexOf(String(over.id))
         const newOrder = arrayMove(prev, oldIndex, newIndex)
 
         // Save new order to backend
-        reorderTasks(newOrder.map((t) => t.id)).catch(() => {
+        reorderTasks(newOrder).catch(() => {
           // Revert on error
-          setOrderedTasks(prev)
+          setOrderedIds(prev)
         })
 
         return newOrder
