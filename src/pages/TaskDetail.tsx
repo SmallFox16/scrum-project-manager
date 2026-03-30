@@ -63,6 +63,17 @@ function TaskDetailContent({ projectId, task }: TaskDetailContentProps) {
           </span>
         </div>
 
+        {task.priority && (
+          <div className="task-detail__meta-item">
+            <span className="task-detail__meta-label">Priority</span>
+            <span className="task-detail__meta-value">
+              <span className={`priority-badge priority-badge--${task.priority}`}>
+                {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+              </span>
+            </span>
+          </div>
+        )}
+
         {member !== undefined && (
           <div className="task-detail__meta-item">
             <span className="task-detail__meta-label">Assignee</span>
