@@ -54,6 +54,7 @@ interface BackendTask {
   sprint_project_id: number | null;
   sprint_project_name: string | null;
   priority: number;
+  priority_level: string | null;
   time_estimate: string | null;
   due_date: string | null;
   created_at: string;
@@ -99,6 +100,7 @@ export function toFrontendTask(bt: BackendTask): Task {
     projectId: bt.project_id ? String(bt.project_id) : '',
     sprintProjectId: bt.sprint_project_id ? String(bt.sprint_project_id) : undefined,
     sprintProjectName: bt.sprint_project_name ?? undefined,
+    priority: bt.priority_level as Task['priority'],
     timeEstimate: bt.time_estimate ?? undefined,
     dueDate: bt.due_date ?? undefined,
     createdAt: bt.created_at,

@@ -80,8 +80,13 @@ export const TaskItem = memo(function TaskItem({
           )}
         </div>
 
-        {/* Meta info: sprint, time estimate, due date */}
+        {/* Meta info: priority, sprint, time estimate, due date */}
         <div className="task-item__meta">
+          {task.priority && (
+            <span className={`priority-badge priority-badge--${task.priority}`}>
+              {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+            </span>
+          )}
           {isProductBacklog && task.sprintProjectName && (
             <span className="task-item__sprint-badge">
               Sprint: {task.sprintProjectName}

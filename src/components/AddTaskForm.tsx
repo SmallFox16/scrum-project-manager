@@ -4,7 +4,7 @@ import { useCreateTask } from '../hooks/mutations/useCreateTask'
 import { fetchBacklogItems } from '../api/projects'
 import { linkPbiToSprint } from '../api/tasks'
 import { useQueryClient } from '@tanstack/react-query'
-import type { Task } from '../types'
+import type { Task, TaskPriority } from '../types'
 
 interface AddTaskFormProps {
   projectId: string;
@@ -14,6 +14,7 @@ interface AddTaskFormProps {
 interface FieldState {
   title: string;
   description: string;
+  priority: TaskPriority | '';
   timeOrDate: 'none' | 'time' | 'date';
   timeEstimate: string;
   dueDate: string;
@@ -22,6 +23,7 @@ interface FieldState {
 const EMPTY_FIELDS: FieldState = {
   title: '',
   description: '',
+  priority: '',
   timeOrDate: 'none',
   timeEstimate: '',
   dueDate: '',
@@ -80,6 +82,10 @@ export function AddTaskForm({ projectId, isProductBacklog = false }: AddTaskForm
       description: fields.description.trim(),
       status: isProductBacklog ? 'ToBeRefined' : 'Todo',
     };
+
+    if (fields.priority) {
+      taskData.priority = fields.priority;
+    }
 
     if (fields.timeOrDate === 'time' && fields.timeEstimate.trim()) {
       taskData.timeEstimate = fields.timeEstimate.trim();
@@ -225,6 +231,22 @@ export function AddTaskForm({ projectId, isProductBacklog = false }: AddTaskForm
             rows={2}
             disabled={createTask.isPending}
           />
+
+          {/* Priority selector */}
+          <div className="add-task-form__priority-group">
+            <span className="add-task-form__priority-label">Priority:</span>
+            {(['low', 'medium', 'high'] as const).map((level) => (
+              <button
+                key={level}
+                type="button"
+                className={`priority-badge priority-badge--${level}${fields.priority === level ? ' priority-badge--selected' : ''}`}
+                onClick={() => setFields({ ...fields, priority: fields.priority === level ? '' : level })}
+                disabled={createTask.isPending}
+              >
+                {level.charAt(0).toUpperCase() + level.slice(1)}
+              </button>
+            ))}
+          </div>
 
           {/* Time Estimate OR Due Date toggle */}
           <div className="add-task-form__time-date-toggle">

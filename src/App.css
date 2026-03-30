@@ -761,6 +761,87 @@
 }
 
 /* ============================================================
+   Priority Badges
+   ============================================================ */
+
+.priority-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: default;
+}
+
+.priority-badge--low {
+  background-color: #dcfce7;
+  color: #166534;
+  border-color: #bbf7d0;
+}
+
+.priority-badge--medium {
+  background-color: #dbeafe;
+  color: #1e40af;
+  border-color: #bfdbfe;
+}
+
+.priority-badge--high {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+
+[data-theme="dark"] .priority-badge--low {
+  background-color: #052e16;
+  color: #86efac;
+  border-color: #14532d;
+}
+
+[data-theme="dark"] .priority-badge--medium {
+  background-color: #172554;
+  color: #93c5fd;
+  border-color: #1e3a5f;
+}
+
+[data-theme="dark"] .priority-badge--high {
+  background-color: #450a0a;
+  color: #fca5a5;
+  border-color: #7f1d1d;
+}
+
+/* Selectable priority buttons in forms */
+button.priority-badge {
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.15s;
+}
+
+button.priority-badge:hover {
+  opacity: 0.8;
+}
+
+button.priority-badge--selected {
+  opacity: 1;
+  box-shadow: 0 0 0 2px var(--color-primary, #3b82f6);
+}
+
+/* Priority group in add task form */
+.add-task-form__priority-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.add-task-form__priority-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+/* ============================================================
    Add Task Form — PBI Picker
    ============================================================ */
 

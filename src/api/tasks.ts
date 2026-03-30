@@ -31,6 +31,7 @@ function toBackendTaskData(data: Partial<Task>): Record<string, unknown> {
   if (data.sprintProjectId !== undefined) result.sprint_project_id = data.sprintProjectId ? Number(data.sprintProjectId) : null
   if (data.timeEstimate !== undefined) result.time_estimate = data.timeEstimate || null
   if (data.dueDate !== undefined) result.due_date = data.dueDate || null
+  if (data.priority !== undefined) result.priority_level = data.priority || null
   return result
 }
 

@@ -40,6 +40,8 @@ export interface FormErrors {
 
 export type TaskStatus = 'ToBeRefined' | 'Todo' | 'InProgress' | 'InReview' | 'Done';
 
+export type TaskPriority = 'low' | 'medium' | 'high';
+
 export interface TaskAssignee {
   id: string;
   name: string;
@@ -51,6 +53,7 @@ export interface Task {
   title: string;
   description: string;
   status: TaskStatus;
+  priority?: TaskPriority;
   assigneeId?: string;
   assignees: TaskAssignee[];
   projectId: string;
