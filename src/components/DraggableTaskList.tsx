@@ -25,6 +25,7 @@ interface DraggableTaskListProps {
   projectId: string;
   onStatusChange: (taskId: string, newStatus: TaskStatus, completedAt?: string) => void;
   onAssign: (taskId: string, assignees: import('../types').TaskAssignee[]) => void;
+  onEdit: (taskId: string, data: Partial<Task>) => void;
   onDelete: (taskId: string) => void;
   isDeleting: boolean;
 }
@@ -34,11 +35,12 @@ interface SortableTaskItemProps {
   projectId: string;
   onStatusChange: (taskId: string, newStatus: TaskStatus, completedAt?: string) => void;
   onAssign: (taskId: string, assignees: import('../types').TaskAssignee[]) => void;
+  onEdit: (taskId: string, data: Partial<Task>) => void;
   onDelete: (taskId: string) => void;
   isDeleting: boolean;
 }
 
-function SortableTaskItem({ task, projectId, onStatusChange, onAssign, onDelete, isDeleting }: SortableTaskItemProps) {
+function SortableTaskItem({ task, projectId, onStatusChange, onAssign, onEdit, onDelete, isDeleting }: SortableTaskItemProps) {
   const {
     attributes,
     listeners,
@@ -65,6 +67,7 @@ function SortableTaskItem({ task, projectId, onStatusChange, onAssign, onDelete,
           projectId={projectId}
           onStatusChange={onStatusChange}
           onAssign={onAssign}
+          onEdit={onEdit}
           onDelete={onDelete}
           isDeleting={isDeleting}
           isProductBacklog
@@ -79,6 +82,7 @@ export function DraggableTaskList({
   projectId,
   onStatusChange,
   onAssign,
+  onEdit,
   onDelete,
   isDeleting,
 }: DraggableTaskListProps) {
@@ -138,6 +142,7 @@ export function DraggableTaskList({
               projectId={projectId}
               onStatusChange={onStatusChange}
               onAssign={onAssign}
+              onEdit={onEdit}
               onDelete={onDelete}
               isDeleting={isDeleting}
             />

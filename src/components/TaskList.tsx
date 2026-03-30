@@ -48,6 +48,13 @@ export function TaskList({ initialTasks }: TaskListProps) {
     [updateTaskMutation],
   );
 
+  const handleEdit = useCallback(
+    (taskId: string, data: Partial<Task>) => {
+      updateTaskMutation.mutate({ taskId, data });
+    },
+    [updateTaskMutation],
+  );
+
   const handleDelete = useCallback(
     (taskId: string) => {
       deleteTaskMutation.mutate(taskId);
@@ -80,6 +87,7 @@ export function TaskList({ initialTasks }: TaskListProps) {
           projectId={projectId ?? ''}
           onStatusChange={handleStatusChange}
           onAssign={handleAssign}
+          onEdit={handleEdit}
           onDelete={handleDelete}
           isDeleting={deleteTaskMutation.isPending}
         />
@@ -92,6 +100,7 @@ export function TaskList({ initialTasks }: TaskListProps) {
                 projectId={projectId ?? ''}
                 onStatusChange={handleStatusChange}
                 onAssign={handleAssign}
+                onEdit={handleEdit}
                 onDelete={handleDelete}
                 isDeleting={deleteTaskMutation.isPending}
                 isProductBacklog={isProductBacklog}

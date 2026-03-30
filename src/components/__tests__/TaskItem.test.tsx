@@ -22,6 +22,7 @@ function makeTask(overrides: Partial<Task> = {}): Task {
 function renderTaskItem(task: Task, props: {
   onStatusChange?: (id: string, status: Task['status'], completedAt?: string) => void;
   onAssign?: (taskId: string, assignees: import('../../types').TaskAssignee[]) => void;
+  onEdit?: (taskId: string, data: Partial<Task>) => void;
   onDelete?: (id: string) => void;
 } = {}) {
   const queryClient = new QueryClient({
@@ -35,6 +36,7 @@ function renderTaskItem(task: Task, props: {
           projectId="proj-1"
           onStatusChange={props.onStatusChange ?? vi.fn()}
           onAssign={props.onAssign ?? vi.fn()}
+          onEdit={props.onEdit ?? vi.fn()}
           onDelete={props.onDelete ?? vi.fn()}
         />
       </MemoryRouter>
