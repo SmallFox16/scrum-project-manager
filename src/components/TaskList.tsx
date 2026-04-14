@@ -81,7 +81,7 @@ export function TaskList({ initialTasks }: TaskListProps) {
         </p>
       ) : filteredTasks.length === 0 ? (
         <p className="task-list__empty">No tasks for this project yet.</p>
-      ) : isProductBacklog && canEdit ? (
+      ) : canEdit ? (
         <DraggableTaskList
           tasks={filteredTasks}
           projectId={projectId ?? ''}
@@ -90,14 +90,16 @@ export function TaskList({ initialTasks }: TaskListProps) {
           onEdit={handleEdit}
           onDelete={handleDelete}
           isDeleting={deleteTaskMutation.isPending}
+          isProductBacklog={isProductBacklog}
         />
       ) : (
         <ul className="task-list__items">
-          {filteredTasks.map((task) => (
+          {filteredTasks.map((task, index) => (
             <li key={task.id}>
               <TaskItem
                 task={task}
                 projectId={projectId ?? ''}
+                itemNumber={index + 1}
                 onStatusChange={handleStatusChange}
                 onAssign={handleAssign}
                 onEdit={handleEdit}

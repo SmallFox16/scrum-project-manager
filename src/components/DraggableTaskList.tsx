@@ -28,19 +28,22 @@ interface DraggableTaskListProps {
   onEdit: (taskId: string, data: Partial<Task>) => void;
   onDelete: (taskId: string) => void;
   isDeleting: boolean;
+  isProductBacklog?: boolean;
 }
 
 interface SortableTaskItemProps {
   task: Task;
   projectId: string;
+  itemNumber: number;
   onStatusChange: (taskId: string, newStatus: TaskStatus, completedAt?: string) => void;
   onAssign: (taskId: string, assignees: import('../types').TaskAssignee[]) => void;
   onEdit: (taskId: string, data: Partial<Task>) => void;
   onDelete: (taskId: string) => void;
   isDeleting: boolean;
+  isProductBacklog?: boolean;
 }
 
-function SortableTaskItem({ task, projectId, onStatusChange, onAssign, onEdit, onDelete, isDeleting }: SortableTaskItemProps) {
+function SortableTaskItem({ task, projectId, itemNumber, onStatusChange, onAssign, onEdit, onDelete, isDeleting, isProductBacklog = false }: SortableTaskItemProps) {
   const {
     attributes,
     listeners,
@@ -65,12 +68,13 @@ function SortableTaskItem({ task, projectId, onStatusChange, onAssign, onEdit, o
         <TaskItem
           task={task}
           projectId={projectId}
+          itemNumber={itemNumber}
           onStatusChange={onStatusChange}
           onAssign={onAssign}
           onEdit={onEdit}
           onDelete={onDelete}
           isDeleting={isDeleting}
-          isProductBacklog
+          isProductBacklog={isProductBacklog}
         />
       </div>
     </li>
@@ -85,6 +89,7 @@ export function DraggableTaskList({
   onEdit,
   onDelete,
   isDeleting,
+  isProductBacklog = false,
 }: DraggableTaskListProps) {
   const [orderedIds, setOrderedIds] = useState<string[]>(() => tasks.map((t) => t.id))
 
@@ -135,16 +140,18 @@ export function DraggableTaskList({
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={orderedTasks.map((t) => t.id)} strategy={verticalListSortingStrategy}>
         <ul className="task-list__items task-list__items--draggable">
-          {orderedTasks.map((task) => (
+          {orderedTasks.map((task, index) => (
             <SortableTaskItem
               key={task.id}
               task={task}
               projectId={projectId}
+              itemNumber={index + 1}
               onStatusChange={onStatusChange}
               onAssign={onAssign}
               onEdit={onEdit}
               onDelete={onDelete}
               isDeleting={isDeleting}
+              isProductBacklog={isProductBacklog}
             />
           ))}
         </ul>

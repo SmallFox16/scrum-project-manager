@@ -1,4 +1,4 @@
-import type { Project, Task, TeamMember } from '../types'
+import type { Project, Task, TeamMember, SubTask } from '../types'
 import { apiFetch } from './client'
 
 // ============================================================
@@ -35,12 +35,23 @@ interface BackendProject {
   description: string | null;
   status: string;
   created_at: string;
+  task_count?: number;
 }
 
 interface BackendAssignee {
   id: number;
   name: string;
   avatar?: string | null;
+}
+
+interface BackendSubtask {
+  id: number;
+  parent_task_id: number;
+  title: string;
+  description: string;
+  status: string;
+  sort_order: number;
+  created_at: string;
 }
 
 interface BackendTask {
@@ -57,6 +68,8 @@ interface BackendTask {
   priority_level: string | null;
   time_estimate: string | null;
   due_date: string | null;
+  subtask_count?: number;
+  subtasks?: BackendSubtask[];
   created_at: string;
 }
 
@@ -72,15 +85,34 @@ const STATUS_MAP: Record<string, Task['status']> = {
   done: 'Done',
 }
 
-function toFrontendProject(bp: BackendProject, taskCount = 0): Project {
+function toFrontendProject(bp: BackendProject, taskCount?: number): Project {
   return {
     id: String(bp.id),
     name: bp.name,
     description: bp.description ?? '',
     status: (bp.status as Project['status']) || 'active',
-    taskCount,
+    taskCount: taskCount ?? bp.task_count ?? 0,
     createdBy: '',
     createdAt: bp.created_at,
+  }
+}
+
+const SUBTASK_STATUS_MAP: Record<string, SubTask['status']> = {
+  todo: 'Todo',
+  in_progress: 'InProgress',
+  in_review: 'InReview',
+  done: 'Done',
+}
+
+function toFrontendSubtask(bs: BackendSubtask): SubTask {
+  return {
+    id: String(bs.id),
+    parentTaskId: String(bs.parent_task_id),
+    title: bs.title,
+    description: bs.description ?? '',
+    status: SUBTASK_STATUS_MAP[bs.status] ?? 'Todo',
+    sortOrder: bs.sort_order,
+    createdAt: bs.created_at,
   }
 }
 
@@ -103,6 +135,8 @@ export function toFrontendTask(bt: BackendTask): Task {
     priority: bt.priority_level as Task['priority'],
     timeEstimate: bt.time_estimate ?? undefined,
     dueDate: bt.due_date ?? undefined,
+    subtaskCount: bt.subtask_count ?? 0,
+    subtasks: (bt.subtasks ?? []).map(toFrontendSubtask),
     createdAt: bt.created_at,
   }
 }

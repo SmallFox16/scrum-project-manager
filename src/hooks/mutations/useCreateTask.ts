@@ -23,6 +23,8 @@ export function useCreateTask(projectId: string) {
           status: 'Todo',
           assignees: [],
           projectId,
+          subtaskCount: 0,
+          subtasks: [],
           createdAt: new Date().toISOString(),
           ...newTaskData,
         }

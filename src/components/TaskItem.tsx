@@ -4,7 +4,7 @@
 
 import { memo } from 'react'
 import { Link } from 'react-router-dom'
-import type { Task, TaskStatus, TaskPriority } from '../types'
+import type { Task, TaskStatus, TaskPriority, SubTask } from '../types'
 import { TaskStatusButton } from './TaskStatusButton'
 import { TeamMemberSelect } from './TeamMemberSelect'
 import { Toast } from './Toast'
@@ -22,6 +22,7 @@ interface TaskItemProps {
   onDelete: (taskId: string) => void;
   isDeleting?: boolean;
   isProductBacklog?: boolean;
+  itemNumber?: number;
 }
 
 export const TaskItem = memo(function TaskItem({
@@ -33,8 +34,10 @@ export const TaskItem = memo(function TaskItem({
   onDelete,
   isDeleting = false,
   isProductBacklog = false,
+  itemNumber,
 }: TaskItemProps) {
   const [showUndoToast, setShowUndoToast] = useState(false);
+  const [showSubtasks, setShowSubtasks] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editTitle, setEditTitle] = useState(task.title);
   const [editPriority, setEditPriority] = useState<TaskPriority | ''>(task.priority || '');
@@ -85,6 +88,9 @@ export const TaskItem = memo(function TaskItem({
     <>
       <div className={`task-item${isOptimistic ? ' task-item--optimistic' : ''}`}>
         <div className="task-item__top">
+          {itemNumber !== undefined && (
+            <span className="task-item__number">#{itemNumber}</span>
+          )}
           {canEdit && (
             <button
               type="button"
@@ -155,6 +161,35 @@ export const TaskItem = memo(function TaskItem({
               assignees={task.assignees ?? []}
               onAssign={onAssign}
             />
+          </div>
+        )}
+
+        {task.subtaskCount > 0 && (
+          <div className="task-item__subtask-section">
+            <button
+              type="button"
+              className="task-item__subtask-toggle"
+              onClick={() => setShowSubtasks(!showSubtasks)}
+              aria-expanded={showSubtasks}
+            >
+              <span className={`task-item__subtask-arrow${showSubtasks ? ' task-item__subtask-arrow--open' : ''}`}>&#9654;</span>
+              {task.subtaskCount} subtask{task.subtaskCount !== 1 ? 's' : ''}
+              {' '}
+              <span className="task-item__subtask-summary">
+                ({task.subtasks.filter((s: SubTask) => s.status === 'Done').length}/{task.subtaskCount} done)
+              </span>
+            </button>
+            {showSubtasks && (
+              <ul className="task-item__subtask-list">
+                {task.subtasks.map((st: SubTask, i: number) => (
+                  <li key={st.id} className="task-item__subtask-preview">
+                    <span className="task-item__subtask-num">{i + 1}.</span>
+                    <span className="task-item__subtask-name">{st.title}</span>
+                    <span className={`status-badge status-badge--${st.status}`}>{st.status}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
       </div>

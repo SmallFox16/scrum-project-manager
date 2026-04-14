@@ -188,6 +188,8 @@ export const handlers = [
       assigneeId: body.assigned_to ? `tm-${body.assigned_to}` : undefined,
       assignees: [],
       projectId: projectId || (tasks.length > 0 ? tasks[0].projectId : ''),
+      subtaskCount: 0,
+      subtasks: [],
       createdAt: new Date().toISOString(),
     }
     tasks = [...tasks, newTask]

@@ -1,6 +1,36 @@
-import type { Task } from '../types'
+import type { Task, SubTask } from '../types'
 import { parseJson, toFrontendTask } from './projects'
 import { apiFetch } from './client'
+
+// ============================================================
+// Subtask status mapping
+// ============================================================
+
+const REVERSE_SUBTASK_STATUS: Record<string, string> = {
+  Todo: 'todo',
+  InProgress: 'in_progress',
+  InReview: 'in_review',
+  Done: 'done',
+}
+
+const SUBTASK_STATUS_MAP: Record<string, SubTask['status']> = {
+  todo: 'Todo',
+  in_progress: 'InProgress',
+  in_review: 'InReview',
+  done: 'Done',
+}
+
+function toFrontendSubtask(bs: any): SubTask {
+  return {
+    id: String(bs.id),
+    parentTaskId: String(bs.parent_task_id),
+    title: bs.title,
+    description: bs.description ?? '',
+    status: SUBTASK_STATUS_MAP[bs.status] ?? 'Todo',
+    sortOrder: bs.sort_order,
+    createdAt: bs.created_at,
+  }
+}
 
 // ============================================================
 // Mutation fetch functions
@@ -100,4 +130,65 @@ export async function linkPbiToSprint(taskId: string, sprintProjectId: string): 
   }
   const result = await parseJson<{ task: any }>(res)
   return toFrontendTask(result.task)
+}
+
+// ============================================================
+// Subtask API functions
+// ============================================================
+
+// GET /api/tasks/:taskId/subtasks
+export async function fetchSubtasks(taskId: string): Promise<SubTask[]> {
+  const res = await apiFetch(`/tasks/${taskId}/subtasks`)
+  if (!res.ok) {
+    throw new Error(`Failed to fetch subtasks: ${res.status}`)
+  }
+  const data = await parseJson<{ subtasks: any[] }>(res)
+  return data.subtasks.map(toFrontendSubtask)
+}
+
+// POST /api/tasks/:taskId/subtasks
+export async function createSubtask(
+  taskId: string,
+  data: { title: string; description?: string },
+): Promise<SubTask> {
+  const res = await apiFetch(`/tasks/${taskId}/subtasks`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+  })
+  if (!res.ok) {
+    throw new Error(`Failed to create subtask: ${res.status}`)
+  }
+  const result = await parseJson<{ subtask: any }>(res)
+  return toFrontendSubtask(result.subtask)
+}
+
+// PUT /api/tasks/:taskId/subtasks/:subtaskId
+export async function updateSubtask(
+  taskId: string,
+  subtaskId: string,
+  data: { title?: string; description?: string; status?: string },
+): Promise<SubTask> {
+  const body: Record<string, unknown> = {}
+  if (data.title !== undefined) body.title = data.title
+  if (data.description !== undefined) body.description = data.description
+  if (data.status !== undefined) body.status = REVERSE_SUBTASK_STATUS[data.status] ?? data.status
+  const res = await apiFetch(`/tasks/${taskId}/subtasks/${subtaskId}`, {
+    method: 'PUT',
+    body: JSON.stringify(body),
+  })
+  if (!res.ok) {
+    throw new Error(`Failed to update subtask: ${res.status}`)
+  }
+  const result = await parseJson<{ subtask: any }>(res)
+  return toFrontendSubtask(result.subtask)
+}
+
+// DELETE /api/tasks/:taskId/subtasks/:subtaskId
+export async function deleteSubtask(taskId: string, subtaskId: string): Promise<void> {
+  const res = await apiFetch(`/tasks/${taskId}/subtasks/${subtaskId}`, {
+    method: 'DELETE',
+  })
+  if (!res.ok) {
+    throw new Error(`Failed to delete subtask: ${res.status}`)
+  }
 }

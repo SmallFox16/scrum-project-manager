@@ -48,6 +48,18 @@ export interface TaskAssignee {
   avatar?: string | null;
 }
 
+export type SubTaskStatus = 'Todo' | 'InProgress' | 'InReview' | 'Done';
+
+export interface SubTask {
+  id: string;
+  parentTaskId: string;
+  title: string;
+  description: string;
+  status: SubTaskStatus;
+  sortOrder: number;
+  createdAt: string;
+}
+
 export interface Task {
   id: string;
   title: string;
@@ -61,6 +73,8 @@ export interface Task {
   timeEstimate?: string;
   sprintProjectId?: string;
   sprintProjectName?: string;
+  subtaskCount: number;
+  subtasks: SubTask[];
   createdAt: string;
   completedAt?: string;
 }
