@@ -14,6 +14,8 @@ function makeTask(overrides: Partial<Task> = {}): Task {
     description: 'Configure GitHub Actions',
     status: 'Todo',
     assignees: [],
+    subtaskCount: 0,
+    subtasks: [],
     createdAt: new Date().toISOString(),
     ...overrides,
   };
